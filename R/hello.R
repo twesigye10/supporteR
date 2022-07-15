@@ -13,7 +13,7 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 #   ROxgyen2 skeleton:         'Ctrl + Shift + Alt + R'
-
+#   Re-render rmd to md with github actions  usethis::use_github_action("render-rmarkdown")
 
 hello <- function() {
   print("Hello, world!")
