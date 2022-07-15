@@ -34,10 +34,10 @@ create_project_sub_folders <- function(input_sub_folders = c("inputs", "outputs"
 #' @return
 #' @export
 #'
-#' @examples create_dot_gitkeep(input_sub_folders = c("inputs", "outputs"))
-#' # This will add .gitignore in the sub folders "inputs", "outputs"
+#' @examples add_dot_gitkeep_to_folder(input_sub_folders = c("inputs", "outputs"))
+#' # This will add .gitkeep in the sub folders "inputs", "outputs"
 #'
-create_dot_gitkeep <- function(input_sub_folders = c("inputs", "outputs")) {
+add_dot_gitkeep_to_folder <- function(input_sub_folders = c("inputs", "outputs")) {
   sub_directories <- input_sub_folders
   # iterate the sub folders and add the required file
   for(x in sub_directories){
