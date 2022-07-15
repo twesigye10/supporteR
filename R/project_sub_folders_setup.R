@@ -27,6 +27,7 @@ create_project_sub_folders <- function(input_sub_folders = c("inputs", "outputs"
 
 
 #' Add .gitkeep file to ignored sub folders in .gitignore
+#'This file helps to be able to commit folders ignored in the gitignore
 #'
 #' @param input_sub_folders Sub folders to be maintained as empty folders in the project structure while committing
 #' The default folders are "inputs", "outputs"
