@@ -2,7 +2,8 @@
 % Please edit documentation in R/project_sub_folders_setup.R
 \name{add_dot_gitkeep_to_folder}
 \alias{add_dot_gitkeep_to_folder}
-\title{Add .gitkeep file to ignored sub folders in .gitignore}
+\title{Add .gitkeep file to ignored sub folders in .gitignore
+This file helps to be able to commit folders ignored in the gitignore}
 \usage{
 add_dot_gitkeep_to_folder(input_sub_folders = c("inputs", "outputs"))
 }
@@ -12,6 +13,7 @@ The default folders are "inputs", "outputs"}
 }
 \description{
 Add .gitkeep file to ignored sub folders in .gitignore
+This file helps to be able to commit folders ignored in the gitignore
 }
 \examples{
 add_dot_gitkeep_to_folder(input_sub_folders = c("inputs", "outputs"))
