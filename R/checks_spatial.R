@@ -69,7 +69,6 @@ check_pt_number_not_in_samples <- function(input_tool_data, input_sample_pt_nos_
            i.check.comment = "",
            i.check.reviewed = "",
            i.check.adjust_log = "",
-           i.check.uuid_cl = "",
            i.check.so_sm_choices = "") %>%
     dplyr::select(starts_with("i.check"))%>%
     rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
@@ -149,7 +148,6 @@ check_threshold_distance <- function(input_sample_data, input_tool_data, input_t
              i.check.comment = "",
              i.check.reviewed = "",
              i.check.adjust_log = "",
-             i.check.uuid_cl = "",
              i.check.so_sm_choices = "") %>%
       dplyr::select(starts_with("i.check"))%>%
       rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
