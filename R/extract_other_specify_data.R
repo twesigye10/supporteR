@@ -8,6 +8,10 @@
 #' @export
 #'
 #' @examples
+#' extract_other_specify_data(input_repeat_data = df_tool_data_protection_risky_places,
+#'                            input_survey = df_survey,
+#'                            input_choices = df_choices)
+#'
 extract_other_specify_data <- function(input_tool_data, input_survey, input_choices) {
 
   # add and rename some columns
@@ -117,6 +121,11 @@ extract_other_specify_data <- function(input_tool_data, input_survey, input_choi
 #' @export
 #'
 #' @examples
+#' extract_other_specify_data_repeats(input_repeat_data = df_tool_data_protection_risky_places,
+#'                                    input_survey = df_survey,
+#'                                    input_choices = df_choices,
+#'                                    input_sheet_name = "protection_risky_places",
+#'                                    input_repeat_cols = c("places_where_children_are_mostly_at_risk"))
 #'
 extract_other_specify_data_repeats <- function(input_repeat_data, input_survey, input_choices, input_sheet_name, input_repeat_cols) {
 
