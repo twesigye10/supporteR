@@ -2,17 +2,23 @@
 % Please edit documentation in R/extract_other_specify_data.R
 \name{extract_other_specify_data}
 \alias{extract_other_specify_data}
-\title{Title}
+\title{Extract other specify data}
 \usage{
 extract_other_specify_data(input_tool_data, input_survey, input_choices)
 }
 \arguments{
-\item{input_tool_data}{Specify the dataframe for the tool data}
+\item{input_tool_data}{Specify the data frame for the tool data}
 
-\item{input_survey}{Specify the dataframe for the survey sheet}
+\item{input_survey}{Specify the data frame for the survey sheet}
 
-\item{input_choices}{Specify the dataframe for the choices sheet}
+\item{input_choices}{Specify the data frame for the choices sheet}
 }
 \description{
-Title
+Extract other specify data
+}
+\examples{
+extract_other_specify_data(input_repeat_data = df_tool_data_protection_risky_places,
+                           input_survey = df_survey,
+                           input_choices = df_choices)
+
 }
