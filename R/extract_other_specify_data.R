@@ -25,7 +25,7 @@ extract_other_specify_data <- function(input_tool_data, input_survey, input_choi
                                     .f = ~{
                                       df_data %>%
                                         select(-contains("/")) %>%
-                                        select(uuid, start_date, enumerator_id, location, hh_id, other_text = as.character(.x), current_value = str_replace_all(string = .x, pattern = "_other$", replacement = "")) %>%
+                                        select(uuid, start_date, enumerator_id, district_name, point_number, other_text = as.character(.x), current_value = str_replace_all(string = .x, pattern = "_other$", replacement = "")) %>%
                                         filter(!is.na(other_text), !other_text %in% c(" ", "NA")) %>%
                                         mutate(other_name = .x,
                                                int.my_current_val_extract = ifelse(str_detect(current_value, "\\bother\\b"), str_extract_all(string = current_value, pattern = "\\bother\\b|\\w+_other\\b"), current_value),
