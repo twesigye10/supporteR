@@ -232,6 +232,5 @@ extract_other_specify_data_repeats <- function(input_repeat_data, input_survey, 
            comment,
            reviewed,
            adjust_log,
-           uuid_cl,
            so_sm_choices)
 }
