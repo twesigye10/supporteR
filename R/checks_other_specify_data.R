@@ -25,7 +25,7 @@ extract_other_specify_data <- function(input_tool_data, input_survey, input_choi
     colnames()
 
   # data.frame for holding _other response data
-  df_other_response_data <- purr::map_dfr(.x = others_colnames,
+  df_other_response_data <- purrr::map_dfr(.x = others_colnames,
                                     .f = ~{
                                       df_data %>%
                                         select(-contains("/")) %>%
@@ -143,7 +143,7 @@ extract_other_specify_data_repeats <- function(input_repeat_data, input_survey, 
     colnames()
 
   # data.frame for holding _other response data
-  df_other_response_data <- purr::map_dfr(.x = others_colnames,
+  df_other_response_data <- purrr::map_dfr(.x = others_colnames,
                                           .f = ~{
                                             df_data %>%
                                               select(-contains("/")) %>%
