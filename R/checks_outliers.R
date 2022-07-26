@@ -14,7 +14,12 @@
 check_outliers_on_column <- function(input_tool_data, input_column, input_lower_limit, input_upper_limit) {
   input_tool_data %>%
     filter(!!sym(input_column) < input_lower_limit | !!sym(input_column) > input_upper_limit) %>%
-    mutate(i.check.type = "change_response",
+    mutate(i.check.uuid = `_uuid`,
+           i.check.start_date = as_date(start),
+           i.check.enumerator_id = enumerator_id,
+           i.check.district_name = district_name,
+           i.check.point_number = point_number,
+           i.check.type = "change_response",
            i.check.name = input_column,
            i.check.current_value = as.character(!!sym({{input_column}})),
            i.check.value = "NA",
@@ -35,7 +40,7 @@ check_outliers_on_column <- function(input_tool_data, input_column, input_lower_
 
 #' Check for outliers on a column in a repeat loop using percentiles
 #'
-#' @param input_tool_data Specify the data frame for the tool data
+#' @param input_tool_data Specify the data frame for the repeat loop data joined with main dataset
 #' @param input_column Specify the column where to detect outliers
 #' @param input_lower_limit Lower limit value of the lower percentile
 #' @param input_upper_limit Upper limit value of the upper percentile
@@ -50,6 +55,11 @@ check_outliers_on_column_repeats <- function(input_tool_data, input_column, inpu
   input_tool_data %>%
     filter(!!sym(input_column) < input_lower_limit | !!sym(input_column) > input_upper_limit) %>%
     mutate(i.check.sheet = input_sheet_name,
+           i.check.uuid = `_uuid`,
+           i.check.start_date = as_date(start),
+           i.check.enumerator_id = enumerator_id,
+           i.check.district_name = district_name,
+           i.check.point_number = point_number,
            i.check.type = "change_response",
            i.check.name = input_column,
            i.check.current_value = as.character(!!sym({{input_column}})),
@@ -78,6 +88,7 @@ check_outliers_on_column_repeats <- function(input_tool_data, input_column, inpu
 #' @export
 #'
 #' @examples
+#'
 check_outliers_cleaninginspector <- function(input_tool_data) {
 
   escape_columns <- c("start", "end",	"today", "deviceid",
@@ -99,6 +110,55 @@ check_outliers_cleaninginspector <- function(input_tool_data) {
            i.check.name = int.variable,
            i.check.current_value = as.character(int.value),
            i.check.value = "NA",
+           i.check.issue_id = "logic_c_outlier",
+           i.check.issue = paste(int.variable,": ",int.value, "seems to be a ", int.issue_type, ", needs confirmation"),
+           i.check.other_text = "",
+           i.check.checked_by = "",
+           i.check.checked_date = as_date(today()),
+           i.check.comment = "",
+           i.check.reviewed = "",
+           i.check.adjust_log = "",
+           i.check.so_sm_choices = "") %>%
+    ungroup() %>%
+    dplyr::select(starts_with("i.check"))%>%
+    rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+}
+
+
+#' Check for outliers with repeats using cleaninginspectoR package and format the log
+#'
+#' @param input_tool_data Specify the data frame for the repeat loop data joined with main dataset
+#' @param input_sheet_name Specify the sheet name as defined in the tool
+#' @param input_repeat_cols Specify the column names in the repeat loop to be checked
+#'
+#' @return The resulting data frame of data out of range
+#' @export
+#'
+#' @examples
+#'
+check_outliers_cleaninginspector_repeats <- function(input_tool_data, input_sheet_name, input_repeat_cols) {
+
+  escape_columns <- c("start", "end",	"today", "deviceid",
+                      "geopoint",	"_geopoint_latitude",	"_geopoint_longitude",
+                      "_geopoint_altitude", "_geopoint_precision" )
+
+  input_tool_data %>%
+    select(any_of(input_repeat_cols)) %>%
+    cleaninginspectoR::find_outliers() %>%
+    rename(int.index = index, int.value = value, int.variable = variable,
+           int.issue_type = issue_type) %>%
+    left_join(input_tool_data %>% mutate(int.row_number = row_number()),  by = c("int.index" = "int.row_number")) %>%
+    mutate(i.check.sheet = input_sheet_name,
+           i.check.uuid = `_uuid`,
+           i.check.start_date = as_date(start),
+           i.check.enumerator_id = enumerator_id,
+           i.check.district_name = district_name,
+           i.check.point_number = point_number,
+           i.check.type = "change_response",
+           i.check.name = int.variable,
+           i.check.current_value = as.character(int.value),
+           i.check.value = "NA",
+           i.check.index = `_index.y`,
            i.check.issue_id = "logic_c_outlier",
            i.check.issue = paste(int.variable,": ",int.value, "seems to be a ", int.issue_type, ", needs confirmation"),
            i.check.other_text = "",
