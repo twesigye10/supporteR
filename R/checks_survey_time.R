@@ -22,7 +22,7 @@ check_survey_time <- function(input_tool_data, input_min_time, input_max_time) {
     mutate(int.survey_time_interval = lubridate::time_length(end - start, unit = "min"),
            int.survey_time_interval = ceiling(int.survey_time_interval),
            i.check.type = "remove_survey",
-           i.check.name = "hh_id",
+           i.check.name = "point_number",
            i.check.current_value = "",
            i.check.value = "",
            i.check.issue_id = case_when(
@@ -69,7 +69,7 @@ check_time_interval_btn_surveys <- function(input_tool_data, input_min_time) {
            int.time_between_survey = ceiling(int.time_between_survey)) %>%
     filter(int.time_between_survey != 0 & int.time_between_survey < input_min_time) %>%
     mutate(i.check.type = "remove_survey",
-           i.check.name = "hh_id",
+           i.check.name = "point_number",
            i.check.current_value = "",
            i.check.value = "",
            i.check.issue_id = "less_time_btn_surveys",
