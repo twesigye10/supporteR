@@ -85,14 +85,16 @@ extract_other_specify_data <- function(input_tool_data, input_survey, input_choi
            value = as.character(int.my_current_val_extract))
 
   output$select_multiple <- bind_rows(select_mu_add_option, select_mu_remove_option) %>%
-    arrange(uuid, start_date, name)
+    arrange(uuid, start_date, enumerator_id, name)
 
   # merge other checks
   merged_other_checks <- bind_rows(output) %>%
     mutate(so_sm_choices = choice_options) %>%
     select(uuid,
            start_date,
-           settlement,
+           enumerator_id,
+           district_name,
+           point_number,
            type,
            name,
            current_value,
