@@ -84,7 +84,7 @@ check_pt_number_not_in_samples <- function(input_tool_data, input_sample_pt_nos_
            i.check.enumerator_id = enumerator_id,
            i.check.district_name = district_name,
            i.check.point_number = point_number) %>%
-    mutate(ifelse("status" %in% colnames(input_tool_data), paste0(status, "_", point_number ), point_number)) %>%
+    mutate(unique_pt_number = ifelse("status" %in% colnames(input_tool_data), paste0(status, "_", point_number ), point_number)) %>%
     filter(!unique_pt_number %in% input_sample_pt_nos_list) %>%
     mutate(i.check.type = "change_response",
            i.check.name = "point_number",
