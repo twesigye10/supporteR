@@ -9,31 +9,60 @@
 #' @examples
 #'
 check_duplicate_pt_numbers <- function(input_tool_data, input_sample_pt_nos_list) {
-  input_tool_data %>%
-    mutate(i.check.uuid = `_uuid`,
-           i.check.start_date = as_date(start),
-           i.check.enumerator_id = enumerator_id,
-           i.check.district_name = district_name,
-           i.check.point_number = point_number) %>%
-    mutate(unique_pt_number = paste0(status, "_", point_number )) %>%
-    group_by(i.check.district_name, status, i.check.point_number) %>%
-    filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
-    mutate(i.check.type = "change_response",
-           i.check.name = "point_number",
-           i.check.current_value = point_number,
-           i.check.value = "",
-           i.check.issue_id = "spatial_c_duplicate_pt_no",
-           i.check.issue = glue("point_number: {point_number} is duplicated: check that its not a repeated survey"),
-           i.check.other_text = "",
-           i.check.checked_by = "",
-           i.check.checked_date = as_date(today()),
-           i.check.comment = "",
-           i.check.reviewed = "",
-           i.check.adjust_log = "",
-           i.check.so_sm_choices = "") %>%
-    ungroup() %>%
-    dplyr::select(starts_with("i.check"))%>%
-    rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+  if("status" %in% colnames(input_tool_data)){
+    input_tool_data %>%
+      mutate(i.check.uuid = `_uuid`,
+             i.check.start_date = as_date(start),
+             i.check.enumerator_id = enumerator_id,
+             i.check.district_name = district_name,
+             i.check.point_number = point_number) %>%
+      mutate(unique_pt_number = paste0(status, "_", point_number )) %>%
+      group_by(i.check.district_name, status, i.check.point_number) %>%
+      filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
+      mutate(i.check.type = "change_response",
+             i.check.name = "point_number",
+             i.check.current_value = point_number,
+             i.check.value = "",
+             i.check.issue_id = "spatial_c_duplicate_pt_no",
+             i.check.issue = glue("point_number: {point_number} is duplicated: check that its not a repeated survey"),
+             i.check.other_text = "",
+             i.check.checked_by = "",
+             i.check.checked_date = as_date(today()),
+             i.check.comment = "",
+             i.check.reviewed = "",
+             i.check.adjust_log = "",
+             i.check.so_sm_choices = "") %>%
+      ungroup() %>%
+      dplyr::select(starts_with("i.check"))%>%
+      rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+  }else{
+    input_tool_data %>%
+      mutate(i.check.uuid = `_uuid`,
+             i.check.start_date = as_date(start),
+             i.check.enumerator_id = enumerator_id,
+             i.check.district_name = district_name,
+             i.check.point_number = point_number) %>%
+      mutate(unique_pt_number = point_number) %>%
+      group_by(i.check.district_name, i.check.point_number) %>%
+      filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
+      mutate(i.check.type = "change_response",
+             i.check.name = "point_number",
+             i.check.current_value = point_number,
+             i.check.value = "",
+             i.check.issue_id = "spatial_c_duplicate_pt_no",
+             i.check.issue = glue("point_number: {point_number} is duplicated: check that its not a repeated survey"),
+             i.check.other_text = "",
+             i.check.checked_by = "",
+             i.check.checked_date = as_date(today()),
+             i.check.comment = "",
+             i.check.reviewed = "",
+             i.check.adjust_log = "",
+             i.check.so_sm_choices = "") %>%
+      ungroup() %>%
+      dplyr::select(starts_with("i.check"))%>%
+      rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+  }
+
 }
 
 
@@ -55,7 +84,7 @@ check_pt_number_not_in_samples <- function(input_tool_data, input_sample_pt_nos_
            i.check.enumerator_id = enumerator_id,
            i.check.district_name = district_name,
            i.check.point_number = point_number) %>%
-    mutate(unique_pt_number = paste0(status, "_", point_number )) %>%
+    mutate(ifelse("status" %in% colnames(input_tool_data), paste0(status, "_", point_number ), point_number)) %>%
     filter(!unique_pt_number %in% input_sample_pt_nos_list) %>%
     mutate(i.check.type = "change_response",
            i.check.name = "point_number",
@@ -88,11 +117,11 @@ check_pt_number_not_in_samples <- function(input_tool_data, input_sample_pt_nos_
 #'
 check_threshold_distance <- function(input_sample_data, input_tool_data, input_threshold_dist = 150) {
   df_sample_data_thresh <- input_sample_data %>%
-    mutate(unique_pt_number = paste0(status, "_", Name)) %>%
+    mutate(unique_pt_number = ifelse("status" %in% colnames(input_tool_data), paste0(status, "_", Name ), Name)) %>%
     sf::st_transform(4326)
 
   df_tool_data_thresh <- input_tool_data %>%
-    mutate(unique_pt_number = paste0(status, "_", point_number)) %>%
+    mutate(unique_pt_number = ifelse("status" %in% colnames(input_tool_data), paste0(status, "_", point_number ), point_number)) %>%
     sf::st_as_sf(coords = c("_geopoint_longitude","_geopoint_latitude"), crs = 4326)
 
   # sample_data_unique_pts
