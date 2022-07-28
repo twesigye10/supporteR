@@ -14,7 +14,7 @@ check_survey_time <- function(input_tool_data, input_min_time, input_max_time) {
   input_tool_data %>%
     mutate(i.check.uuid = `_uuid`,
            i.check.start_date = as_date(start),
-           i.check.enumerator_id = enumerator_id,
+           i.check.enumerator_id = as.character(enumerator_id),
            i.check.district_name = district_name,
            i.check.point_number = point_number,
            start = as_datetime(start),
@@ -57,7 +57,7 @@ check_time_interval_btn_surveys <- function(input_tool_data, input_min_time) {
   input_tool_data %>%
     mutate(i.check.uuid = `_uuid`,
            i.check.start_date = as_date(start),
-           i.check.enumerator_id = enumerator_id,
+           i.check.enumerator_id = as.character(enumerator_id),
            i.check.district_name = district_name,
            i.check.point_number = point_number,
            start = as_datetime(start),

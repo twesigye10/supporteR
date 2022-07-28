@@ -13,7 +13,7 @@ check_duplicate_pt_numbers <- function(input_tool_data, input_sample_pt_nos_list
     input_tool_data %>%
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
-             i.check.enumerator_id = enumerator_id,
+             i.check.enumerator_id = as.character(enumerator_id),
              i.check.district_name = district_name,
              i.check.point_number = point_number) %>%
       mutate(unique_pt_number = paste0(status, "_", point_number )) %>%
@@ -39,7 +39,7 @@ check_duplicate_pt_numbers <- function(input_tool_data, input_sample_pt_nos_list
     input_tool_data %>%
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
-             i.check.enumerator_id = enumerator_id,
+             i.check.enumerator_id = as.character(enumerator_id),
              i.check.district_name = district_name,
              i.check.point_number = point_number) %>%
       mutate(unique_pt_number = point_number) %>%
@@ -82,7 +82,7 @@ check_pt_number_not_in_samples <- function(input_tool_data, input_sample_pt_nos_
     input_tool_data %>%
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
-             i.check.enumerator_id = enumerator_id,
+             i.check.enumerator_id = as.character(enumerator_id),
              i.check.district_name = district_name,
              i.check.point_number = point_number) %>%
       mutate(unique_pt_number = paste0(status, "_", point_number )) %>%
@@ -106,7 +106,7 @@ check_pt_number_not_in_samples <- function(input_tool_data, input_sample_pt_nos_
     input_tool_data %>%
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
-             i.check.enumerator_id = enumerator_id,
+             i.check.enumerator_id = as.character(enumerator_id),
              i.check.district_name = district_name,
              i.check.point_number = point_number) %>%
       mutate(unique_pt_number = point_number) %>%
@@ -200,7 +200,7 @@ check_threshold_distance <- function(input_sample_data, input_tool_data, input_t
     df_data_with_distance %>%
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
-             i.check.enumerator_id = enumerator_id,
+             i.check.enumerator_id = as.character(enumerator_id),
              i.check.district_name = district_name,
              i.check.point_number = point_number) %>%
       filter(as.numeric(distance) >= input_threshold_dist) %>%
