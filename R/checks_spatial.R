@@ -21,7 +21,7 @@ check_duplicate_pt_numbers <- function(input_tool_data, input_sample_pt_nos_list
       filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
              i.check.name = "point_number",
-             i.check.current_value = point_number,
+             i.check.current_value = as.character(point_number),
              i.check.value = "",
              i.check.issue_id = "spatial_c_duplicate_pt_no",
              i.check.issue = glue("point_number: {point_number} is duplicated: check that its not a repeated survey"),
@@ -47,7 +47,7 @@ check_duplicate_pt_numbers <- function(input_tool_data, input_sample_pt_nos_list
       filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
              i.check.name = "point_number",
-             i.check.current_value = point_number,
+             i.check.current_value = as.character(point_number),
              i.check.value = "",
              i.check.issue_id = "spatial_c_duplicate_pt_no",
              i.check.issue = glue("point_number: {point_number} is duplicated: check that its not a repeated survey"),
@@ -89,7 +89,7 @@ check_pt_number_not_in_samples <- function(input_tool_data, input_sample_pt_nos_
       filter(!unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
              i.check.name = "point_number",
-             i.check.current_value = point_number,
+             i.check.current_value = as.character(point_number),
              i.check.value = "",
              i.check.issue_id = "spatial_c_pt_no_not_in_sample",
              i.check.issue = glue("point_number: {point_number} not in samples"),
@@ -113,7 +113,7 @@ check_pt_number_not_in_samples <- function(input_tool_data, input_sample_pt_nos_
       filter(!unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
              i.check.name = "point_number",
-             i.check.current_value = point_number,
+             i.check.current_value = as.character(point_number),
              i.check.value = "",
              i.check.issue_id = "spatial_c_pt_no_not_in_sample",
              i.check.issue = glue("point_number: {point_number} not in samples"),
@@ -206,7 +206,7 @@ check_threshold_distance <- function(input_sample_data, input_tool_data, input_t
       filter(as.numeric(distance) >= input_threshold_dist) %>%
       mutate(i.check.type = "remove_survey",
              i.check.name = "point_number",
-             i.check.current_value = point_number,
+             i.check.current_value = as.character(point_number),
              i.check.value = "",
              i.check.issue_id = "spatial_c_dist_to_sample_greater_than_threshold",
              i.check.issue = glue("{distance} m greater_than_threshold: {input_threshold_dist} m"),
