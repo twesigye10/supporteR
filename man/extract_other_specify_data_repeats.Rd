@@ -6,6 +6,8 @@
 \usage{
 extract_other_specify_data_repeats(
   input_repeat_data,
+  input_point_id_col = "point_number",
+  input_location_col = "district_name",
   input_survey,
   input_choices,
   input_sheet_name,
@@ -14,6 +16,10 @@ extract_other_specify_data_repeats(
 }
 \arguments{
 \item{input_repeat_data}{Specify the data frame for the main dataset joined with repeat. Keep the order Main dataset then join repeat}
+
+\item{input_point_id_col}{Specify the column for the point_id}
+
+\item{input_location_col}{Specify the column for location description in the dataset}
 
 \item{input_survey}{Specify the data frame for the survey sheet}
 
@@ -32,6 +38,8 @@ Extract other specify data for repeats
 \examples{
 extract_other_specify_data_repeats(input_repeat_data = df_tool_data_protection_risky_places,
                                    input_survey = df_survey,
+                                   input_point_id_col = point_number,
+                                   input_location_col = district_name,
                                    input_choices = df_choices,
                                    input_sheet_name = "protection_risky_places",
                                    input_repeat_cols = c("places_where_children_are_mostly_at_risk"))

@@ -1,6 +1,8 @@
 #' Extract other specify data
 #'
 #' @param input_tool_data Specify the data frame for the tool data
+#' @param input_point_id_col Specify the column for the point_id
+#' @param input_location_col Specify the column for location description in the dataset
 #' @param input_survey Specify the data frame for the survey sheet
 #' @param input_choices Specify the data frame for the choices sheet
 #'
@@ -9,10 +11,12 @@
 #'
 #' @examples
 #' extract_other_specify_data(input_repeat_data = df_tool_data_protection_risky_places,
+#'                            input_point_id_col = point_number,
+#'                            input_location_col = district_name,
 #'                            input_survey = df_survey,
 #'                            input_choices = df_choices)
 #'
-extract_other_specify_data <- function(input_tool_data, input_survey, input_choices) {
+extract_other_specify_data <- function(input_tool_data, input_point_id_col = "point_number", input_location_col = "district_name", input_survey, input_choices) {
 
   # add and rename some columns
   df_data <- input_tool_data %>%
@@ -30,7 +34,7 @@ extract_other_specify_data <- function(input_tool_data, input_survey, input_choi
                                     .f = ~{
                                       df_data %>%
                                         select(-contains("/")) %>%
-                                        select(uuid, start_date, enumerator_id, district_name, point_number, other_text = as.character(.x), current_value = str_replace_all(string = .x, pattern = "_other$", replacement = "")) %>%
+                                        select(uuid, start_date, enumerator_id, sym(input_location_col) , sym(input_point_id_col), other_text = as.character(.x), current_value = str_replace_all(string = .x, pattern = "_other$", replacement = "")) %>%
                                         filter(!is.na(other_text), !other_text %in% c(" ", "NA")) %>%
                                         mutate(other_name = .x,
                                                int.my_current_val_extract = ifelse(str_detect(current_value, "\\bother\\b"), str_extract_all(string = current_value, pattern = "\\bother\\b|\\w+_other\\b"), current_value),
@@ -94,8 +98,8 @@ extract_other_specify_data <- function(input_tool_data, input_survey, input_choi
     select(uuid,
            start_date,
            enumerator_id,
-           district_name,
-           point_number,
+           sym(input_location_col),
+           sym(input_point_id_col),
            type,
            name,
            current_value,
@@ -115,6 +119,8 @@ extract_other_specify_data <- function(input_tool_data, input_survey, input_choi
 #' Extract other specify data for repeats
 #'
 #' @param input_repeat_data Specify the data frame for the main dataset joined with repeat. Keep the order Main dataset then join repeat
+#' @param input_point_id_col Specify the column for the point_id
+#' @param input_location_col Specify the column for location description in the dataset
 #' @param input_survey Specify the data frame for the survey sheet
 #' @param input_choices Specify the data frame for the choices sheet
 #' @param input_sheet_name Specify the sheet name as in the tool
@@ -126,11 +132,13 @@ extract_other_specify_data <- function(input_tool_data, input_survey, input_choi
 #' @examples
 #' extract_other_specify_data_repeats(input_repeat_data = df_tool_data_protection_risky_places,
 #'                                    input_survey = df_survey,
+#'                                    input_point_id_col = point_number,
+#'                                    input_location_col = district_name,
 #'                                    input_choices = df_choices,
 #'                                    input_sheet_name = "protection_risky_places",
 #'                                    input_repeat_cols = c("places_where_children_are_mostly_at_risk"))
 #'
-extract_other_specify_data_repeats <- function(input_repeat_data, input_survey, input_choices, input_sheet_name, input_repeat_cols) {
+extract_other_specify_data_repeats <- function(input_repeat_data, input_point_id_col = "point_number", input_location_col = "district_name", input_survey, input_choices, input_sheet_name, input_repeat_cols) {
 
   # add and rename some columns
   df_data <- input_repeat_data %>%
@@ -151,7 +159,7 @@ extract_other_specify_data_repeats <- function(input_repeat_data, input_survey, 
                                           .f = ~{
                                             df_data %>%
                                               select(-contains("/")) %>%
-                                              select(uuid, start_date, enumerator_id, district_name, point_number, other_text = as.character(.x),
+                                              select(uuid, start_date, enumerator_id, sym(input_location_col) , sym(input_point_id_col), other_text = as.character(.x),
                                                      current_value = str_replace_all(string = .x, pattern = "_other$", replacement = ""),
                                                      , index = `_index.y`) %>%
                                               filter(!is.na(other_text), !other_text %in% c(" ", "NA")) %>%
@@ -221,8 +229,8 @@ extract_other_specify_data_repeats <- function(input_repeat_data, input_survey, 
            uuid,
            start_date,
            enumerator_id,
-           district_name,
-           point_number,
+           sym(input_location_col),
+           sym(input_point_id_col),
            type,
            name,
            current_value,

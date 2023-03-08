@@ -4,10 +4,20 @@
 \alias{extract_other_specify_data}
 \title{Extract other specify data}
 \usage{
-extract_other_specify_data(input_tool_data, input_survey, input_choices)
+extract_other_specify_data(
+  input_tool_data,
+  input_point_id_col = "point_number",
+  input_location_col = "district_name",
+  input_survey,
+  input_choices
+)
 }
 \arguments{
 \item{input_tool_data}{Specify the data frame for the tool data}
+
+\item{input_point_id_col}{Specify the column for the point_id}
+
+\item{input_location_col}{Specify the column for location description in the dataset}
 
 \item{input_survey}{Specify the data frame for the survey sheet}
 
@@ -18,6 +28,8 @@ Extract other specify data
 }
 \examples{
 extract_other_specify_data(input_repeat_data = df_tool_data_protection_risky_places,
+                           input_point_id_col = point_number,
+                           input_location_col = district_name,
                            input_survey = df_survey,
                            input_choices = df_choices)
 
