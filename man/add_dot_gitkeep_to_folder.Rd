@@ -5,7 +5,9 @@
 \title{Add .gitkeep file to ignored sub folders in .gitignore
 This file helps to be able to commit folders ignored in the gitignore}
 \usage{
-add_dot_gitkeep_to_folder(input_sub_folders = c("inputs", "outputs"))
+add_dot_gitkeep_to_folder(
+  input_sub_folders = c("inputs", "outputs", "support_files")
+)
 }
 \arguments{
 \item{input_sub_folders}{Sub folders to be maintained as empty folders in the project structure while committing
@@ -14,9 +16,4 @@ The default folders are "inputs", "outputs"}
 \description{
 Add .gitkeep file to ignored sub folders in .gitignore
 This file helps to be able to commit folders ignored in the gitignore
-}
-\examples{
-add_dot_gitkeep_to_folder(input_sub_folders = c("inputs", "outputs"))
-# This will add .gitkeep in the sub folders "inputs", "outputs"
-
 }
