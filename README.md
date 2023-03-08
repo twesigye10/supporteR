@@ -1,5 +1,5 @@
 
-# checksupporteR
+# supporteR
 
 <!-- badges: start -->
 <!-- badges: end -->

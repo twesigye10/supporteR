@@ -12,7 +12,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# checksupporteR
+# supporteR
 
 <!-- badges: start -->
 <!-- badges: end -->
