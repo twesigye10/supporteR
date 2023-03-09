@@ -63,7 +63,7 @@ extract_other_specify_data <- function(input_tool_data,
   # get choices to add to the _other responses extracted
   df_grouped_choices <- input_choices %>%
     group_by(list_name) %>%
-    summarise(choice_options = paste(name, collapse = " : ")) %>%
+    summarise(choice_options = stringr::str_trunc(paste(name, collapse = " : "), 1000)) %>%
     arrange(list_name)
 
   # extract parent question and join survey for extracting list_name
@@ -198,7 +198,7 @@ extract_other_specify_data_repeats <- function(input_repeat_data,
   # get choices to add to the _other responses extracted
   df_grouped_choices <- input_choices %>%
     group_by(list_name) %>%
-    summarise(choice_options = paste(name, collapse = " : ")) %>%
+    summarise(choice_options = stringr::str_trunc(paste(name, collapse = " : "), 1000)) %>%
     arrange(list_name)
 
   # extract parent question and join survey for extracting list_name
