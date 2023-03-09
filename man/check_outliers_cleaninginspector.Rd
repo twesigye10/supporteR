@@ -4,10 +4,21 @@
 \alias{check_outliers_cleaninginspector}
 \title{Check for outliers using cleaninginspectoR package and format the log}
 \usage{
-check_outliers_cleaninginspector(input_tool_data)
+check_outliers_cleaninginspector(
+  input_tool_data,
+  input_enumerator_id_col = "enumerator_id",
+  input_location_col,
+  input_point_id_col
+)
 }
 \arguments{
 \item{input_tool_data}{Specify the data frame for the tool data}
+
+\item{input_enumerator_id_col}{Specify the enumerator id column}
+
+\item{input_location_col}{Specify the location description column}
+
+\item{input_point_id_col}{Specify the point id column}
 }
 \value{
 The resulting data frame of data out of range
