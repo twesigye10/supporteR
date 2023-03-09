@@ -4,10 +4,22 @@
 \alias{check_pt_number_not_in_samples}
 \title{Check for point numbers not in samples}
 \usage{
-check_pt_number_not_in_samples(input_tool_data, input_sample_pt_nos_list)
+check_pt_number_not_in_samples(
+  input_tool_data,
+  input_enumerator_id_col = "enumerator_id",
+  input_location_col,
+  input_point_id_col,
+  input_sample_pt_nos_list
+)
 }
 \arguments{
 \item{input_tool_data}{Specify the data frame for the tool data}
+
+\item{input_enumerator_id_col}{Specify the enumerator id column}
+
+\item{input_location_col}{Specify the location description column}
+
+\item{input_point_id_col}{Specify the point id column}
 
 \item{input_sample_pt_nos_list}{Specify a list of sample point numbers}
 }

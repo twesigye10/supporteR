@@ -7,6 +7,9 @@
 check_threshold_distance(
   input_sample_data,
   input_tool_data,
+  input_enumerator_id_col = "enumerator_id",
+  input_location_col,
+  input_point_id_col,
   input_threshold_dist = 150
 )
 }
@@ -14,6 +17,12 @@ check_threshold_distance(
 \item{input_sample_data}{Specify a GIS layer with sample data}
 
 \item{input_tool_data}{Specify the data frame for the tool data with "_geopoint_longitude" and "_geopoint_latitude" columns}
+
+\item{input_enumerator_id_col}{Specify the enumerator id column}
+
+\item{input_location_col}{Specify the location description column}
+
+\item{input_point_id_col}{Specify the point id column}
 
 \item{input_threshold_dist}{Specify threshold distance. Default is 150m}
 }

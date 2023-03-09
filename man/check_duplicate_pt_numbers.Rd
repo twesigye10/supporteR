@@ -4,15 +4,27 @@
 \alias{check_duplicate_pt_numbers}
 \title{Check duplicate point numbers}
 \usage{
-check_duplicate_pt_numbers(input_tool_data, input_sample_pt_nos_list)
+check_duplicate_pt_numbers(
+  input_tool_data,
+  input_enumerator_id_col = "enumerator_id",
+  input_location_col,
+  input_point_id_col,
+  input_sample_pt_nos_list
+)
 }
 \arguments{
 \item{input_tool_data}{Specify the data frame for the tool data}
 
+\item{input_enumerator_id_col}{Specify the enumerator id column}
+
+\item{input_location_col}{Specify the location description column}
+
+\item{input_point_id_col}{Specify the point id column}
+
 \item{input_sample_pt_nos_list}{Specify a list of sample point numbers}
 }
 \value{
-Data frame of surveys with duplicate point_number
+Data frame of surveys with duplicate point ids
 }
 \description{
 Check duplicate point numbers
