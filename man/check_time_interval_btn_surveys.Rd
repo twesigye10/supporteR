@@ -4,10 +4,22 @@
 \alias{check_time_interval_btn_surveys}
 \title{Check interval between surveys by the same enumerator}
 \usage{
-check_time_interval_btn_surveys(input_tool_data, input_min_time)
+check_time_interval_btn_surveys(
+  input_tool_data,
+  input_enumerator_id_col = "enumerator_id",
+  input_location_col,
+  input_point_id_col,
+  input_min_time
+)
 }
 \arguments{
 \item{input_tool_data}{Specify the data frame for the tool data}
+
+\item{input_enumerator_id_col}{Specify the enumerator id column}
+
+\item{input_location_col}{Specify the location description column}
+
+\item{input_point_id_col}{Specify the point id column}
 
 \item{input_min_time}{Specify the minimum expected time for an enumerator to move from one survey location to another}
 }

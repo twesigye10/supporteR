@@ -2,6 +2,9 @@
 #' Check survey time against expected minimum time and maximum time of the survey
 #'
 #' @param input_tool_data Specify the data frame for the tool data
+#' @param input_enumerator_id_col Specify the enumerator id column
+#' @param input_location_col Specify the location description column
+#' @param input_point_id_col Specify the point id column
 #' @param input_min_time Specify the minimum expected time for the survey
 #' @param input_max_time Specify the maximum expected time for the survey
 #'
@@ -51,6 +54,9 @@ check_survey_time <- function(input_tool_data,
 #' Check interval between surveys by the same enumerator
 #'
 #' @param input_tool_data Specify the data frame for the tool data
+#' @param input_enumerator_id_col Specify the enumerator id column
+#' @param input_location_col Specify the location description column
+#' @param input_point_id_col Specify the point id column
 #' @param input_min_time Specify the minimum expected time for an enumerator to move from one survey location to another
 #'
 #' @return The resulting data frame of surveys not meeting this requirement
