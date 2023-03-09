@@ -27,8 +27,8 @@ extract_other_specify_data <- function(input_tool_data,
 
   # add and rename some columns
   df_data <- input_tool_data %>%
-    rename(i.check.uuid = `_uuid`) %>%
-    mutate(i.check.start_date = as_date(start),
+    mutate(i.check.uuid = `_uuid`,
+           i.check.start_date = as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)))
 
   # get questions with other
@@ -159,8 +159,8 @@ extract_other_specify_data_repeats <- function(input_repeat_data,
   # add and rename some columns
   df_data <- input_repeat_data %>%
     filter(!is.na(start)) %>%
-    rename(i.check.uuid = `_uuid`) %>%
-    mutate(i.check.start_date = as_date(start),
+    mutate(i.check.uuid = `_uuid`,
+           i.check.start_date = as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)))
 
   # get questions with other
