@@ -1,8 +1,9 @@
 #' Extract other specify data
 #'
 #' @param input_tool_data Specify the data frame for the tool data
-#' @param input_point_id_col Specify the column for the point_id
+#' @param input_enumerator_id_col Specify the enumerator id column
 #' @param input_location_col Specify the column for location description in the dataset
+#' @param input_point_id_col Specify the column for the point_id
 #' @param input_survey Specify the data frame for the survey sheet
 #' @param input_choices Specify the data frame for the choices sheet
 #'
@@ -11,18 +12,24 @@
 #'
 #' @examples
 #' extract_other_specify_data(input_repeat_data = df_tool_data_protection_risky_places,
-#'                            input_point_id_col = point_number,
-#'                            input_location_col = district_name,
+#'                            input_enumerator_id_col = "enumerator_id",
+#'                            input_location_col = "district_name",
+#'                            input_point_id_col = "point_number",
 #'                            input_survey = df_survey,
 #'                            input_choices = df_choices)
 #'
-extract_other_specify_data <- function(input_tool_data, input_point_id_col = "point_number", input_location_col = "district_name", input_survey, input_choices) {
+extract_other_specify_data <- function(input_tool_data,
+                                       input_enumerator_id_col = "enumerator_id",
+                                       input_location_col = "district_name",
+                                       input_point_id_col = "point_number",
+                                       input_survey,
+                                       input_choices) {
 
   # add and rename some columns
   df_data <- input_tool_data %>%
-    rename(uuid = `_uuid`) %>%
-    mutate(start_date = as_date(start),
-           enumerator_id = as.character(enumerator_id))
+    rename(i.check.uuid = `_uuid`) %>%
+    mutate(i.check.start_date = as_date(start),
+           !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)))
 
   # get questions with other
   others_colnames <-  df_data %>%
@@ -34,7 +41,13 @@ extract_other_specify_data <- function(input_tool_data, input_point_id_col = "po
                                     .f = ~{
                                       df_data %>%
                                         select(-contains("/")) %>%
-                                        select(uuid, start_date, enumerator_id, sym(input_location_col) , sym(input_point_id_col), other_text = as.character(.x), current_value = str_replace_all(string = .x, pattern = "_other$", replacement = "")) %>%
+                                        select(i.check.uuid,
+                                               i.check.start_date,
+                                               !!paste0("i.check.", input_enumerator_id_col),
+                                               !!paste0("i.check.", input_location_col),
+                                               !!paste0("i.check.", input_point_id_col),
+                                               other_text = as.character(.x),
+                                               current_value = str_replace_all(string = .x, pattern = "_other$", replacement = "")) %>%
                                         filter(!is.na(other_text), !other_text %in% c(" ", "NA")) %>%
                                         mutate(other_name = .x,
                                                int.my_current_val_extract = ifelse(str_detect(current_value, "\\bother\\b"), str_extract_all(string = current_value, pattern = "\\bother\\b|\\w+_other\\b"), current_value),
@@ -45,7 +58,7 @@ extract_other_specify_data <- function(input_tool_data, input_point_id_col = "po
 
   # arrange the data
   df_data_arranged <- df_other_response_data %>%
-    arrange(start_date, uuid)
+    arrange(i.check.start_date, i.check.uuid)
 
   # get choices to add to the _other responses extracted
   df_grouped_choices <- input_choices %>%
@@ -77,50 +90,45 @@ extract_other_specify_data <- function(input_tool_data, input_point_id_col = "po
   # select_one checks
   output$select_one <- df_join_other_response_with_choices %>%
     filter(str_detect(select_type, c("select_one|select one"))) %>%
-    mutate(type = "change_response")
+    mutate(i.check.type = "change_response")
 
   # select_multiple checks
   select_mu_data <- df_join_other_response_with_choices %>%
     filter(str_detect(select_type, c("select_multiple|select multiple")))
 
   select_mu_add_option <- select_mu_data %>%
-    mutate(type = "add_option")
+    mutate(i.check.type = "add_option")
   select_mu_remove_option <- select_mu_data %>%
-    mutate(type = "remove_option",
+    mutate(i.check.type = "remove_option",
            value = as.character(int.my_current_val_extract))
 
   output$select_multiple <- bind_rows(select_mu_add_option, select_mu_remove_option) %>%
-    arrange(uuid, start_date, enumerator_id, name)
+    arrange(i.check.uuid, i.check.start_date, !!paste0("i.check.", input_enumerator_id_col), name)
 
   # merge other checks
   merged_other_checks <- bind_rows(output) %>%
-    mutate(so_sm_choices = choice_options) %>%
-    select(uuid,
-           start_date,
-           enumerator_id,
-           sym(input_location_col),
-           sym(input_point_id_col),
-           type,
-           name,
-           current_value,
-           value,
-           issue_id,
-           issue,
-           other_text,
-           checked_by,
-           checked_date,
-           comment,
-           reviewed,
-           adjust_log,
-           so_sm_choices)
+    mutate(i.check.name = name,
+           i.check.current_value = current_value,
+           i.check.value = value,
+           i.check.issue_id = issue_id,
+           i.check.issue = issue,
+           i.check.other_text = other_text,
+           i.check.checked_by = checked_by,
+           i.check.checked_date = checked_date,
+           i.check.comment = comment,
+           i.check.reviewed = reviewed,
+           i.check.adjust_log = adjust_log,
+           i.check.so_sm_choices = choice_options) %>%
+    batch_select_rename()
 }
 
 
 #' Extract other specify data for repeats
 #'
 #' @param input_repeat_data Specify the data frame for the main dataset joined with repeat. Keep the order Main dataset then join repeat
+#'  @param input_enumerator_id_col Specify the enumerator id column
+#'  @param input_location_col Specify the column for location description in the dataset
 #' @param input_point_id_col Specify the column for the point_id
-#' @param input_location_col Specify the column for location description in the dataset
 #' @param input_survey Specify the data frame for the survey sheet
 #' @param input_choices Specify the data frame for the choices sheet
 #' @param input_sheet_name Specify the sheet name as in the tool
@@ -132,21 +140,28 @@ extract_other_specify_data <- function(input_tool_data, input_point_id_col = "po
 #' @examples
 #' extract_other_specify_data_repeats(input_repeat_data = df_tool_data_protection_risky_places,
 #'                                    input_survey = df_survey,
-#'                                    input_point_id_col = point_number,
-#'                                    input_location_col = district_name,
+#'                                    input_enumerator_id_col = "enumerator_id",
+#'                                    input_location_col = "district_name",
+#'                                    input_point_id_col = "point_number",
 #'                                    input_choices = df_choices,
 #'                                    input_sheet_name = "protection_risky_places",
 #'                                    input_repeat_cols = c("places_where_children_are_mostly_at_risk"))
 #'
-extract_other_specify_data_repeats <- function(input_repeat_data, input_point_id_col = "point_number", input_location_col = "district_name", input_survey, input_choices, input_sheet_name, input_repeat_cols) {
+extract_other_specify_data_repeats <- function(input_repeat_data,
+                                               input_enumerator_id_col,
+                                               input_location_col = "district_name",
+                                               input_point_id_col = "point_number",
+                                               input_survey,
+                                               input_choices,
+                                               input_sheet_name,
+                                               input_repeat_cols) {
 
   # add and rename some columns
   df_data <- input_repeat_data %>%
-    rename(uuid = `_uuid`) %>%
     filter(!is.na(start)) %>%
-    mutate(start_date = as_date(start),
-           enumerator_id = as.character(enumerator_id))
-
+    rename(i.check.uuid = `_uuid`) %>%
+    mutate(i.check.start_date = as_date(start),
+           !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)))
 
   # get questions with other
   others_colnames <-  df_data %>%
@@ -159,9 +174,14 @@ extract_other_specify_data_repeats <- function(input_repeat_data, input_point_id
                                           .f = ~{
                                             df_data %>%
                                               select(-contains("/")) %>%
-                                              select(uuid, start_date, enumerator_id, sym(input_location_col) , sym(input_point_id_col), other_text = as.character(.x),
+                                              select(i.check.uuid,
+                                                     i.check.start_date,
+                                                     !!paste0("i.check.", input_enumerator_id_col),
+                                                     !!paste0("i.check.", input_location_col),
+                                                     !!paste0("i.check.", input_point_id_col),
+                                                     other_text = as.character(.x),
                                                      current_value = str_replace_all(string = .x, pattern = "_other$", replacement = ""),
-                                                     , index = `_index.y`) %>%
+                                                     index = `_index.y`) %>%
                                               filter(!is.na(other_text), !other_text %in% c(" ", "NA")) %>%
                                               mutate(other_name = .x,
                                                      int.my_current_val_extract = ifelse(str_detect(current_value, "\\bother\\b"), str_extract_all(string = current_value, pattern = "\\bother\\b|\\w+_other\\b"), current_value),
@@ -173,7 +193,7 @@ extract_other_specify_data_repeats <- function(input_repeat_data, input_point_id
 
   # arrange the data
   df_data_arranged <- df_other_response_data %>%
-    arrange(start_date, uuid)
+    arrange(i.check.start_date, i.check.uuid)
 
   # get choices to add to the _other responses extracted
   df_grouped_choices <- input_choices %>%
@@ -192,7 +212,6 @@ extract_other_specify_data_repeats <- function(input_repeat_data, input_point_id
     left_join(df_grouped_choices, by = "list_name") %>%
     mutate(issue_id = "other_checks",
            issue = "",
-           sheet = input_sheet_name,
            checked_by = "",
            checked_date = as_date(today()),
            comment = "",
@@ -206,43 +225,36 @@ extract_other_specify_data_repeats <- function(input_repeat_data, input_point_id
   # select_one checks
   output$select_one <- df_join_other_response_with_choices %>%
     filter(str_detect(select_type, c("select_one|select one"))) %>%
-    mutate(type = "change_response")
+    mutate(i.check.type = "change_response")
 
   # select_multiple checks
   select_mu_data <- df_join_other_response_with_choices %>%
     filter(str_detect(select_type, c("select_multiple|select multiple")))
 
   select_mu_add_option <- select_mu_data %>%
-    mutate(type = "add_option")
+    mutate(i.check.type = "add_option")
   select_mu_remove_option <- select_mu_data %>%
-    mutate(type = "remove_option",
+    mutate(i.check.type = "remove_option",
            value = as.character(int.my_current_val_extract))
 
   output$select_multiple <- bind_rows(select_mu_add_option, select_mu_remove_option) %>%
-    arrange(uuid, start_date, enumerator_id, name)
+    arrange(i.check.uuid, i.check.start_date, !!paste0("i.check.", input_enumerator_id_col), name)
 
   # merge other checks
   merged_other_checks <- bind_rows(output) %>%
-    mutate(uuid_cl = "",
-           so_sm_choices = choice_options) %>%
-    select(sheet,
-           uuid,
-           start_date,
-           enumerator_id,
-           sym(input_location_col),
-           sym(input_point_id_col),
-           type,
-           name,
-           current_value,
-           value,
-           index,
-           issue_id,
-           issue,
-           other_text,
-           checked_by,
-           checked_date,
-           comment,
-           reviewed,
-           adjust_log,
-           so_sm_choices)
+    mutate(i.check.name = name,
+           i.check.current_value = current_value,
+           i.check.value = value,
+           i.check.issue_id = issue_id,
+           i.check.issue = issue,
+           i.check.other_text = other_text,
+           i.check.checked_by = checked_by,
+           i.check.checked_date = checked_date,
+           i.check.comment = comment,
+           i.check.reviewed = reviewed,
+           i.check.adjust_log = adjust_log,
+           i.check.so_sm_choices = choice_options,
+           i.check.sheet = input_sheet_name,
+           i.check.index = index) %>%
+    batch_select_rename()
 }
