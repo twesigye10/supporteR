@@ -10,13 +10,18 @@
 #'
 #' @examples
 #'
-check_survey_time <- function(input_tool_data, input_min_time, input_max_time) {
+check_survey_time <- function(input_tool_data,
+                              input_enumerator_id_col = "enumerator_id",
+                              input_location_col,
+                              input_point_id_col,
+                              input_min_time,
+                              input_max_time) {
   input_tool_data %>%
     mutate(i.check.uuid = `_uuid`,
            i.check.start_date = as_date(start),
-           i.check.enumerator_id = as.character(enumerator_id),
-           i.check.district_name = district_name,
-           i.check.point_number = point_number,
+           !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
+           !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
+           !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
            start = as_datetime(start),
            end = as_datetime(end)) %>%
     mutate(int.survey_time_interval = lubridate::time_length(end - start, unit = "min"),
@@ -53,13 +58,17 @@ check_survey_time <- function(input_tool_data, input_min_time, input_max_time) {
 #'
 #' @examples
 #'
-check_time_interval_btn_surveys <- function(input_tool_data, input_min_time) {
+check_time_interval_btn_surveys <- function(input_tool_data,
+                                            input_enumerator_id_col = "enumerator_id",
+                                            input_location_col,
+                                            input_point_id_col,
+                                            input_min_time) {
   input_tool_data %>%
     mutate(i.check.uuid = `_uuid`,
            i.check.start_date = as_date(start),
-           i.check.enumerator_id = as.character(enumerator_id),
-           i.check.district_name = district_name,
-           i.check.point_number = point_number,
+           !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
+           !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
+           !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
            start = as_datetime(start),
            end = as_datetime(end)) %>%
     group_by(i.check.start_date, i.check.enumerator_id) %>%
