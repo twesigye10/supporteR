@@ -118,7 +118,7 @@ check_outliers_cleaninginspector <- function(input_tool_data,
 
   escape_columns <- c("start", "end",	"today", "deviceid",
                       "geopoint",	"_geopoint_latitude",	"_geopoint_longitude",
-                      "_geopoint_altitude", "_geopoint_precision" )
+                      "_geopoint_altitude", "_geopoint_precision", "_id")
 
   input_tool_data %>%
     select(-any_of(escape_columns)) %>%
@@ -173,7 +173,7 @@ check_outliers_cleaninginspector_repeats <- function(input_tool_data,
 
   escape_columns <- c("start", "end",	"today", "deviceid",
                       "geopoint",	"_geopoint_latitude",	"_geopoint_longitude",
-                      "_geopoint_altitude", "_geopoint_precision" )
+                      "_geopoint_altitude", "_geopoint_precision", "_id", "_parent_index", "_submission__id")
 
   input_tool_data %>%
     select(any_of(input_repeat_cols)) %>%
