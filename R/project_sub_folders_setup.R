@@ -67,7 +67,7 @@ add_dot_gitkeep_to_folder <- function(input_sub_folders = c("inputs", "outputs",
 #' @return
 #' @export
 #'
-#' @examples add_gitignore_entries(input_lines_to_add = c("\n*.html", "*.xlsx", "*.xls", ".csv", ".pdf", ".doc", ".docx", "inputs/*","outputs/*","support_files/*","!/**/.gitkeep")
+#' @examples
 #'
 add_gitignore_entries <- function(input_lines_to_add = c("\n*.html", "*.xlsx", "*.xls", ".csv", ".pdf", ".doc", ".docx", "inputs/*","outputs/*","support_files/*","!/**/.gitkeep")) {
   # check file existence
