@@ -56,3 +56,32 @@ add_dot_gitkeep_to_folder <- function(input_sub_folders = c("inputs", "outputs",
     }
   }
 }
+
+
+#' Add gitignore entries
+#' This adds entries to the gitignore file in the project so that
+#' the files are not followed and committed for version management
+#'
+#' @param input_lines_to_add A vector of files and folders to ignore
+#'
+#' @return
+#' @export
+#'
+#' @examples add_gitignore_entries(input_lines_to_add = c("\n*.html", "*.xlsx", "*.xls", ".csv", ".pdf", ".doc", ".docx", "inputs/*","outputs/*","support_files/*","!/**/.gitkeep")
+#'
+add_gitignore_entries <- function(input_lines_to_add = c("\n*.html", "*.xlsx", "*.xls", ".csv", ".pdf", ".doc", ".docx", "inputs/*","outputs/*","support_files/*","!/**/.gitkeep")) {
+  # check file existence
+  check_file <- file.exists(paste0(getwd(),"/.gitignore"))
+  # if gitignore file exists
+  if (check_file == TRUE) {
+    file_path <- paste0(getwd(),"/.gitignore")
+    current_ignore_entries <-  read_lines(paste0(getwd(),"/.gitignore"))
+    for (x in input_lines_to_add) {
+      if (!x %in% current_ignore_entries){
+        write(x, file_path, append = TRUE)
+      } else{warning( paste(x, ": already exists in gitignore file"))}
+    }
+  } else{
+    warning("gitignore file does not exist, first enable git in the project")
+  }
+}
