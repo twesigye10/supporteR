@@ -99,3 +99,34 @@ check_time_interval_btn_surveys <- function(input_tool_data,
     dplyr::select(starts_with("i.check")) %>%
     rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
 }
+
+
+#' Get average survey time
+#' This function tends to exclude outliers
+#'
+#' @param input_tool_data Specify the data frame for the tool data
+#' @param input_lower_limit Specify the quantile lower limit
+#' @param input_upper_limit Specify the quantile upper limit
+#'
+#' @return
+#' @export
+#'
+#' @examples
+get_average_survey_time <- function(input_tool_data, input_lower_limit = 0.025, input_upper_limit = 0.975) {
+
+  df_tool_data_with_time_interval <- input_tool_data |>
+    mutate(int.survey_time_interval = lubridate::time_length(end - start, unit = "min"),
+           int.survey_time_interval = ceiling(int.survey_time_interval)
+    )|>
+    filter(int.survey_time_interval > 0 ) |> # consider only surveys with positive time interval
+    select(int.survey_time_interval)
+
+  # lower and upper quantiles of survey duration
+  lower_limit = quantile(df_tool_data_with_time_interval$int.survey_time_interval, input_lower_limit, na.rm =TRUE)
+  upper_limit = quantile(df_tool_data_with_time_interval$int.survey_time_interval, input_upper_limit, na.rm =TRUE)
+
+  df_tool_data_with_time_interval |>
+    filter(int.survey_time_interval > lower_limit | int.survey_time_interval < upper_limit) |>
+    summarise(average_time = round(mean(int.survey_time_interval, na.rm = TRUE), 0)) |>
+    pull()
+}
