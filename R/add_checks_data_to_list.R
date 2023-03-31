@@ -21,6 +21,6 @@ add_checks_data_to_list <- function(input_list_name, input_df_name) {
       assign(x = input_list_name, value = global_list_data, envir = .GlobalEnv)
     }
   } else{
-    message("given objects not in the global environment.")
+    message(paste("Given objects not in the global environment. Check for", input_list_name, "and", input_df_name))
   }
 }
