@@ -4,7 +4,6 @@
 #' @param input_tool_data Specify the data frame for the tool data
 #' @param input_enumerator_id_col Specify the enumerator id column
 #' @param input_location_col Specify the location description column
-#' @param input_point_id_col Specify the point id column
 #' @param input_min_time Specify the minimum expected time for the survey
 #' @param input_max_time Specify the maximum expected time for the survey
 #'
@@ -16,7 +15,6 @@
 check_survey_time <- function(input_tool_data,
                               input_enumerator_id_col = "enumerator_id",
                               input_location_col,
-                              input_point_id_col,
                               input_min_time,
                               input_max_time) {
   input_tool_data %>%
@@ -24,13 +22,12 @@ check_survey_time <- function(input_tool_data,
            i.check.start_date = as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
            !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-           !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
            start = as_datetime(start),
            end = as_datetime(end)) %>%
     mutate(int.survey_time_interval = lubridate::time_length(end - start, unit = "min"),
            int.survey_time_interval = ceiling(int.survey_time_interval),
            i.check.type = "remove_survey",
-           i.check.name = input_point_id_col,
+           i.check.name = "",
            i.check.current_value = "",
            i.check.value = "",
            i.check.issue_id = case_when(
@@ -46,8 +43,7 @@ check_survey_time <- function(input_tool_data,
            i.check.adjust_log = "",
            i.check.so_sm_choices = "") %>%
     filter(i.check.issue_id %in% c("less_survey_time", "more_survey_time")) %>%
-    dplyr::select(starts_with("i.check")) %>%
-    rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+    batch_select_rename()
 }
 
 
@@ -56,7 +52,6 @@ check_survey_time <- function(input_tool_data,
 #' @param input_tool_data Specify the data frame for the tool data
 #' @param input_enumerator_id_col Specify the enumerator id column
 #' @param input_location_col Specify the location description column
-#' @param input_point_id_col Specify the point id column
 #' @param input_min_time Specify the minimum expected time for an enumerator to move from one survey location to another
 #'
 #' @return The resulting data frame of surveys not meeting this requirement
@@ -67,14 +62,12 @@ check_survey_time <- function(input_tool_data,
 check_time_interval_btn_surveys <- function(input_tool_data,
                                             input_enumerator_id_col = "enumerator_id",
                                             input_location_col,
-                                            input_point_id_col,
                                             input_min_time) {
   input_tool_data %>%
     mutate(i.check.uuid = `_uuid`,
            i.check.start_date = as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
            !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-           !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
            start = as_datetime(start),
            end = as_datetime(end)) %>%
     group_by(i.check.start_date, i.check.enumerator_id) %>%
@@ -84,7 +77,7 @@ check_time_interval_btn_surveys <- function(input_tool_data,
            int.time_between_survey = ceiling(int.time_between_survey)) %>%
     filter(int.time_between_survey != 0 & int.time_between_survey < input_min_time) %>%
     mutate(i.check.type = "remove_survey",
-           i.check.name = input_point_id_col,
+           i.check.name = "",
            i.check.current_value = "",
            i.check.value = "",
            i.check.issue_id = "less_time_btn_surveys",
@@ -96,8 +89,7 @@ check_time_interval_btn_surveys <- function(input_tool_data,
            i.check.reviewed = "",
            i.check.adjust_log = "",
            i.check.so_sm_choices = "") %>%
-    dplyr::select(starts_with("i.check")) %>%
-    rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+    batch_select_rename()
 }
 
 

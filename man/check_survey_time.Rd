@@ -8,7 +8,6 @@ check_survey_time(
   input_tool_data,
   input_enumerator_id_col = "enumerator_id",
   input_location_col,
-  input_point_id_col,
   input_min_time,
   input_max_time
 )
@@ -19,8 +18,6 @@ check_survey_time(
 \item{input_enumerator_id_col}{Specify the enumerator id column}
 
 \item{input_location_col}{Specify the location description column}
-
-\item{input_point_id_col}{Specify the point id column}
 
 \item{input_min_time}{Specify the minimum expected time for the survey}
 
