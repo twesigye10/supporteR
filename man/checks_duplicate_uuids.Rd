@@ -4,12 +4,10 @@
 \alias{checks_duplicate_uuids}
 \title{Check data for duplicate uuids}
 \usage{
-checks_duplicate_uuids(input_tool_data, input_point_id_col)
+checks_duplicate_uuids(input_tool_data)
 }
 \arguments{
 \item{input_tool_data}{Specify the data frame for the tool data}
-
-\item{input_point_id_col}{Specify the point id column}
 }
 \description{
 Check data for duplicate uuids

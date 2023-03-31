@@ -1,19 +1,18 @@
 #' Check data for duplicate uuids
 #'
 #' @param input_tool_data Specify the data frame for the tool data
-#' @param input_point_id_col Specify the point id column
 #'
 #' @return
 #' @export
 #'
 #' @examples
-checks_duplicate_uuids <- function(input_tool_data, input_point_id_col) {
+checks_duplicate_uuids <- function(input_tool_data) {
   input_tool_data %>%
     group_by(i.check.uuid) %>%
     filter(row_number()  > 1) %>%
     mutate(
       i.check.type = "remove_survey",
-      i.check.name = input_point_id_col,
+      i.check.name = "uuid",
       i.check.current_value = "",
       i.check.value = "",
       i.check.issue_id = "duplicate_uuid",
