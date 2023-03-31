@@ -66,8 +66,7 @@ check_duplicate_pt_numbers <- function(input_tool_data,
              i.check.adjust_log = "",
              i.check.so_sm_choices = "") %>%
       ungroup() %>%
-      dplyr::select(starts_with("i.check"))%>%
-      rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+      batch_select_rename()
   }
 
 }
@@ -114,8 +113,7 @@ check_pt_number_not_in_samples <- function(input_tool_data,
              i.check.reviewed = "",
              i.check.adjust_log = "",
              i.check.so_sm_choices = "") %>%
-      dplyr::select(starts_with("i.check"))%>%
-      rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+      batch_select_rename()
   }else{
     input_tool_data %>%
       mutate(i.check.uuid = `_uuid`,
@@ -138,8 +136,7 @@ check_pt_number_not_in_samples <- function(input_tool_data,
              i.check.reviewed = "",
              i.check.adjust_log = "",
              i.check.so_sm_choices = "") %>%
-      dplyr::select(starts_with("i.check"))%>%
-      rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+      batch_select_rename()
   }
 
 }
@@ -239,7 +236,6 @@ check_threshold_distance <- function(input_sample_data,
              i.check.reviewed = "",
              i.check.adjust_log = "",
              i.check.so_sm_choices = "") %>%
-      dplyr::select(starts_with("i.check"))%>%
-      rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+      batch_select_rename()
   }
 }
