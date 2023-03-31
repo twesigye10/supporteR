@@ -8,7 +8,6 @@ extract_other_specify_data(
   input_tool_data,
   input_enumerator_id_col = "enumerator_id",
   input_location_col = "district_name",
-  input_point_id_col = "point_number",
   input_survey,
   input_choices
 )
@@ -19,8 +18,6 @@ extract_other_specify_data(
 \item{input_enumerator_id_col}{Specify the enumerator id column}
 
 \item{input_location_col}{Specify the column for location description in the dataset}
-
-\item{input_point_id_col}{Specify the column for the point_id}
 
 \item{input_survey}{Specify the data frame for the survey sheet}
 
@@ -33,7 +30,6 @@ Extract other specify data
 extract_other_specify_data(input_repeat_data = df_tool_data_protection_risky_places,
                            input_enumerator_id_col = "enumerator_id",
                            input_location_col = "district_name",
-                           input_point_id_col = "point_number",
                            input_survey = df_survey,
                            input_choices = df_choices)
 

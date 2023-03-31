@@ -3,7 +3,6 @@
 #' @param input_tool_data Specify the data frame for the tool data
 #' @param input_enumerator_id_col Specify the enumerator id column
 #' @param input_location_col Specify the column for location description in the dataset
-#' @param input_point_id_col Specify the column for the point_id
 #' @param input_survey Specify the data frame for the survey sheet
 #' @param input_choices Specify the data frame for the choices sheet
 #'
@@ -14,14 +13,12 @@
 #' extract_other_specify_data(input_repeat_data = df_tool_data_protection_risky_places,
 #'                            input_enumerator_id_col = "enumerator_id",
 #'                            input_location_col = "district_name",
-#'                            input_point_id_col = "point_number",
 #'                            input_survey = df_survey,
 #'                            input_choices = df_choices)
 #'
 extract_other_specify_data <- function(input_tool_data,
                                        input_enumerator_id_col = "enumerator_id",
                                        input_location_col = "district_name",
-                                       input_point_id_col = "point_number",
                                        input_survey,
                                        input_choices) {
 
@@ -45,7 +42,6 @@ extract_other_specify_data <- function(input_tool_data,
                                                i.check.start_date,
                                                !!paste0("i.check.", input_enumerator_id_col),
                                                !!paste0("i.check.", input_location_col),
-                                               !!paste0("i.check.", input_point_id_col),
                                                other_text = as.character(.x),
                                                current_value = str_replace_all(string = .x, pattern = "_other$", replacement = "")) %>%
                                         filter(!is.na(other_text), !other_text %in% c(" ", "NA")) %>%
@@ -128,7 +124,6 @@ extract_other_specify_data <- function(input_tool_data,
 #' @param input_repeat_data Specify the data frame for the main dataset joined with repeat. Keep the order Main dataset then join repeat
 #'  @param input_enumerator_id_col Specify the enumerator id column
 #'  @param input_location_col Specify the column for location description in the dataset
-#' @param input_point_id_col Specify the column for the point_id
 #' @param input_survey Specify the data frame for the survey sheet
 #' @param input_choices Specify the data frame for the choices sheet
 #' @param input_sheet_name Specify the sheet name as in the tool
@@ -142,7 +137,6 @@ extract_other_specify_data <- function(input_tool_data,
 #'                                    input_survey = df_survey,
 #'                                    input_enumerator_id_col = "enumerator_id",
 #'                                    input_location_col = "district_name",
-#'                                    input_point_id_col = "point_number",
 #'                                    input_choices = df_choices,
 #'                                    input_sheet_name = "protection_risky_places",
 #'                                    input_repeat_cols = c("places_where_children_are_mostly_at_risk"))
@@ -150,7 +144,6 @@ extract_other_specify_data <- function(input_tool_data,
 extract_other_specify_data_repeats <- function(input_repeat_data,
                                                input_enumerator_id_col,
                                                input_location_col = "district_name",
-                                               input_point_id_col = "point_number",
                                                input_survey,
                                                input_choices,
                                                input_sheet_name,
@@ -178,7 +171,6 @@ extract_other_specify_data_repeats <- function(input_repeat_data,
                                                      i.check.start_date,
                                                      !!paste0("i.check.", input_enumerator_id_col),
                                                      !!paste0("i.check.", input_location_col),
-                                                     !!paste0("i.check.", input_point_id_col),
                                                      other_text = as.character(.x),
                                                      current_value = str_replace_all(string = .x, pattern = "_other$", replacement = ""),
                                                      index = `_index.y`) %>%
