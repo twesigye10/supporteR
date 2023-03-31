@@ -2,13 +2,13 @@
 % Please edit documentation in R/checks_add_extra_cols.R
 \name{checks_add_extra_cols}
 \alias{checks_add_extra_cols}
-\title{Add extra columns to harmonise checking}
+\title{Add extra columns to harmonise checking
+This adds columns uuid, start_date, enum_id_col and location_col to the data}
 \usage{
 checks_add_extra_cols(
   input_tool_data,
   input_enumerator_id_col,
-  input_location_col,
-  input_point_id_col
+  input_location_col
 )
 }
 \arguments{
@@ -17,9 +17,8 @@ checks_add_extra_cols(
 \item{input_enumerator_id_col}{Specify the enumerator id column}
 
 \item{input_location_col}{Specify the location description column}
-
-\item{input_point_id_col}{Specify the point id column}
 }
 \description{
 Add extra columns to harmonise checking
+This adds columns uuid, start_date, enum_id_col and location_col to the data
 }
