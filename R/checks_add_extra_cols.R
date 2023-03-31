@@ -11,7 +11,7 @@
 #' @examples
 #'
 checks_add_extra_cols <- function(input_tool_data, input_enumerator_id_col, input_location_col, input_point_id_col) {
-  input_tool_data %>%
+  input_tool_data |>
     dplyr::mutate(i.check.uuid = `_uuid`,
            i.check.start_date = lubridate::as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
