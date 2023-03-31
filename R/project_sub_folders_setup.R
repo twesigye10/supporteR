@@ -75,7 +75,7 @@ add_gitignore_entries <- function(input_lines_to_add = c("\n# Add file types to 
   # if gitignore file exists
   if (check_file == TRUE) {
     file_path <- paste0(getwd(),"/.gitignore")
-    current_ignore_entries <-  read_lines(paste0(getwd(),"/.gitignore"))
+    current_ignore_entries <-  readr::read_lines(paste0(getwd(),"/.gitignore"))
     for (x in input_lines_to_add) {
       if (!x %in% current_ignore_entries){
         write(x, file_path, append = TRUE)
