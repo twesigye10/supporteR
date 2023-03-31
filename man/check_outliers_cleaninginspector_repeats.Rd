@@ -8,7 +8,6 @@ check_outliers_cleaninginspector_repeats(
   input_tool_data,
   input_enumerator_id_col = "enumerator_id",
   input_location_col,
-  input_point_id_col,
   input_sheet_name,
   input_repeat_cols
 )
@@ -19,8 +18,6 @@ check_outliers_cleaninginspector_repeats(
 \item{input_enumerator_id_col}{Specify the enumerator id column}
 
 \item{input_location_col}{Specify the location description column}
-
-\item{input_point_id_col}{Specify the point id column}
 
 \item{input_sheet_name}{Specify the sheet name as defined in the tool}
 

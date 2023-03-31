@@ -4,7 +4,6 @@
 #' @param input_tool_data Specify the data frame for the tool data
 #' @param input_enumerator_id_col Specify the enumerator id column
 #' @param input_location_col Specify the location description column
-#' @param input_point_id_col Specify the point id column
 #' @param input_column    Specify the column where to detect outliers
 #' @param input_lower_limit Lower limit value of the lower percentile
 #' @param input_upper_limit Upper limit value of the upper percentile
@@ -17,7 +16,6 @@
 check_outliers_on_column <- function(input_tool_data,
                                      input_enumerator_id_col = "enumerator_id",
                                      input_location_col,
-                                     input_point_id_col,
                                      input_column,
                                      input_lower_limit,
                                      input_upper_limit) {
@@ -27,7 +25,6 @@ check_outliers_on_column <- function(input_tool_data,
            i.check.start_date = as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
            !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-           !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
            i.check.type = "change_response",
            i.check.name = input_column,
            i.check.current_value = as.character(!!sym({{input_column}})),
@@ -42,8 +39,7 @@ check_outliers_on_column <- function(input_tool_data,
            i.check.adjust_log = "",
            i.check.so_sm_choices = "") %>%
     ungroup() %>%
-    dplyr::select(starts_with("i.check"))%>%
-    rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+    batch_select_rename()
 }
 
 
@@ -52,7 +48,6 @@ check_outliers_on_column <- function(input_tool_data,
 #' @param input_tool_data Specify the data frame for the repeat loop data joined with main dataset
 #' @param input_enumerator_id_col Specify the enumerator id column
 #' @param input_location_col Specify the location description column
-#' @param input_point_id_col Specify the point id column
 #' @param input_column Specify the column where to detect outliers
 #' @param input_lower_limit Lower limit value of the lower percentile
 #' @param input_upper_limit Upper limit value of the upper percentile
@@ -66,7 +61,6 @@ check_outliers_on_column <- function(input_tool_data,
 check_outliers_on_column_repeats <- function(input_tool_data,
                                              input_enumerator_id_col = "enumerator_id",
                                              input_location_col,
-                                             input_point_id_col,
                                              input_column,
                                              input_lower_limit,
                                              input_upper_limit,
@@ -78,7 +72,6 @@ check_outliers_on_column_repeats <- function(input_tool_data,
            i.check.start_date = as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
            !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-           !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
            i.check.type = "change_response",
            i.check.name = input_column,
            i.check.current_value = as.character(!!sym({{input_column}})),
@@ -94,8 +87,7 @@ check_outliers_on_column_repeats <- function(input_tool_data,
            i.check.adjust_log = "",
            i.check.so_sm_choices = "") %>%
     ungroup() %>%
-    dplyr::select(starts_with("i.check"))%>%
-    rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+    batch_select_rename()
 }
 
 
@@ -104,7 +96,6 @@ check_outliers_on_column_repeats <- function(input_tool_data,
 #' @param input_tool_data Specify the data frame for the tool data
 #' @param input_enumerator_id_col Specify the enumerator id column
 #' @param input_location_col Specify the location description column
-#' @param input_point_id_col Specify the point id column
 #'
 #' @return The resulting data frame of data out of range
 #' @export
@@ -113,8 +104,7 @@ check_outliers_on_column_repeats <- function(input_tool_data,
 #'
 check_outliers_cleaninginspector <- function(input_tool_data,
                                              input_enumerator_id_col = "enumerator_id",
-                                             input_location_col,
-                                             input_point_id_col) {
+                                             input_location_col) {
 
   escape_columns <- c("start", "end",	"today", "deviceid",
                       "geopoint",	"_geopoint_latitude",	"_geopoint_longitude",
@@ -130,7 +120,6 @@ check_outliers_cleaninginspector <- function(input_tool_data,
            i.check.start_date = as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
            !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-           !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
            i.check.type = "change_response",
            i.check.name = int.variable,
            i.check.current_value = as.character(int.value),
@@ -145,8 +134,7 @@ check_outliers_cleaninginspector <- function(input_tool_data,
            i.check.adjust_log = "",
            i.check.so_sm_choices = "") %>%
     ungroup() %>%
-    dplyr::select(starts_with("i.check"))%>%
-    rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+    batch_select_rename()
 }
 
 
@@ -155,7 +143,6 @@ check_outliers_cleaninginspector <- function(input_tool_data,
 #' @param input_tool_data Specify the data frame for the repeat loop data joined with main dataset
 #' @param input_enumerator_id_col Specify the enumerator id column
 #' @param input_location_col Specify the location description column
-#' @param input_point_id_col Specify the point id column
 #' @param input_sheet_name Specify the sheet name as defined in the tool
 #' @param input_repeat_cols Specify the column names in the repeat loop to be checked
 #'
@@ -167,7 +154,6 @@ check_outliers_cleaninginspector <- function(input_tool_data,
 check_outliers_cleaninginspector_repeats <- function(input_tool_data,
                                                      input_enumerator_id_col = "enumerator_id",
                                                      input_location_col,
-                                                     input_point_id_col,
                                                      input_sheet_name,
                                                      input_repeat_cols) {
 
@@ -186,7 +172,6 @@ check_outliers_cleaninginspector_repeats <- function(input_tool_data,
            i.check.start_date = as_date(start),
            !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
            !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-           !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
            i.check.type = "change_response",
            i.check.name = int.variable,
            i.check.current_value = as.character(int.value),
@@ -202,7 +187,6 @@ check_outliers_cleaninginspector_repeats <- function(input_tool_data,
            i.check.adjust_log = "",
            i.check.so_sm_choices = "") %>%
     ungroup() %>%
-    dplyr::select(starts_with("i.check"))%>%
-    rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+    batch_select_rename()
 }
 
