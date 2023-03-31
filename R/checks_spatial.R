@@ -21,10 +21,9 @@ check_duplicate_pt_numbers <- function(input_tool_data,
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
              !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
-             !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-             !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col)) %>%
+             !!paste0("i.check.", input_location_col) := !!sym(input_location_col)) %>%
       mutate(unique_pt_number = paste0(status, "_", !!sym(input_point_id_col) )) %>%
-      group_by(!!paste0("i.check.", input_location_col), status, !!paste0("i.check.", input_point_id_col)) %>%
+      group_by(!!paste0("i.check.", input_location_col), status, !!paste0("int.", input_point_id_col)) %>%
       filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
              i.check.name = input_point_id_col,
@@ -47,10 +46,9 @@ check_duplicate_pt_numbers <- function(input_tool_data,
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
              !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
-             !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-             !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col)) %>%
+             !!paste0("i.check.", input_location_col) := !!sym(input_location_col)) %>%
       mutate(unique_pt_number = !!sym(input_point_id_col)) %>%
-      group_by(!!paste0("i.check.", input_location_col), !!paste0("i.check.", input_point_id_col)) %>%
+      group_by(!!paste0("i.check.", input_location_col), !!paste0("int.", input_point_id_col)) %>%
       filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
              i.check.name = input_point_id_col,
@@ -96,8 +94,7 @@ check_pt_number_not_in_samples <- function(input_tool_data,
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
              !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
-             !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-             !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col)) %>%
+             !!paste0("i.check.", input_location_col) := !!sym(input_location_col)) %>%
       mutate(unique_pt_number = paste0(status, "_", !!sym(input_point_id_col) )) %>%
       filter(!unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
@@ -119,8 +116,7 @@ check_pt_number_not_in_samples <- function(input_tool_data,
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
              !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
-             !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-             !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col)) %>%
+             !!paste0("i.check.", input_location_col) := !!sym(input_location_col)) %>%
       mutate(unique_pt_number = !!sym(input_point_id_col)) %>%
       filter(!unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
@@ -220,8 +216,7 @@ check_threshold_distance <- function(input_sample_data,
       mutate(i.check.uuid = `_uuid`,
              i.check.start_date = as_date(start),
              !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
-             !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-             !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col)) %>%
+             !!paste0("i.check.", input_location_col) := !!sym(input_location_col)) %>%
       filter(as.numeric(distance) >= input_threshold_dist) %>%
       mutate(i.check.type = "remove_survey",
              i.check.name = input_point_id_col,
