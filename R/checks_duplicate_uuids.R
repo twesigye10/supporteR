@@ -8,9 +8,9 @@
 #' @examples
 checks_duplicate_uuids <- function(input_tool_data) {
   input_tool_data %>%
-    group_by(i.check.uuid) %>%
-    filter(row_number()  > 1) %>%
-    mutate(
+    dplyr::group_by(i.check.uuid) %>%
+    dplyr::filter(row_number()  > 1) %>%
+    dplyr::mutate(
       i.check.type = "remove_survey",
       i.check.name = "uuid",
       i.check.current_value = "",
