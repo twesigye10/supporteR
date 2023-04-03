@@ -7,8 +7,9 @@ This adds entries to the gitignore file in the project so that
 the files are not followed and committed for version management}
 \usage{
 add_gitignore_entries(
-  input_lines_to_add = c("\\n*.html", "*.xlsx", "*.xls", ".csv", ".pdf", ".doc",
-    ".docx", "inputs/*", "outputs/*", "support_files/*", "!/**/.gitkeep")
+  input_lines_to_add = c("\\n# Add file types to ignore", "*.html", "*.xlsx", "*.xls",
+    ".csv", ".pdf", ".doc", ".docx", "inputs/*", "outputs/*", "support_files/*",
+    "!/**/.gitkeep")
 )
 }
 \arguments{
