@@ -1,11 +1,10 @@
 Package: supporteR
 Type: Package
-Title: Support Kobo Tools Data Checking
+Title: Support for Data management and analysis
 Version: 0.1.0
 Author: Anthony Twesigye
 Maintainer: Anthony Twesigye <twesigye10@gmail.com>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Support for Data management and analysis
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
@@ -13,4 +12,7 @@ RoxygenNote: 7.2.0
 URL: https://github.com/twesigye10/supporteR
 BugReports: https://github.com/twesigye10/supporteR/issues
 Imports: 
-    dplyr
+    dplyr,
+    lubridate,
+    purrr,
+    tidyr
