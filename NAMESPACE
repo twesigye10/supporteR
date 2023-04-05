@@ -3,6 +3,7 @@
 export(add_checks_data_to_list)
 export(add_dot_gitkeep_to_folder)
 export(add_gitignore_entries)
+export(analysis_after_survey_creation)
 export(batch_select_rename)
 export(check_duplicate_pt_numbers)
 export(check_outliers_cleaninginspector)
