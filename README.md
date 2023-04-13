@@ -9,8 +9,8 @@ initially starting with kobo tools data in ensuring its quality.
 
 ## Installation
 
-You can install the development version of supporteR from
-[GitHub](https://github.com/) with:
+You can install the development version of **supporteR** from **GitHub**
+with:
 
 ``` r
 # install.packages("devtools")

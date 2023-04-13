@@ -21,7 +21,7 @@ The goal of supporteR is an R package to support data management initially start
 
 ## Installation
 
-You can install the development version of supporteR from [GitHub](https://github.com/) with:
+You can install the development version of **supporteR** from **GitHub** with:
 
 ```{r, eval=FALSE}
 # install.packages("devtools")
