@@ -1,4 +1,4 @@
-#' Calculate mode with No consensus for ties
+#' Calculate mode with No Consensus for ties
 #'
 #' @param x Specify a vector whose mode is to be calculated
 #' @param na.rm
