@@ -26,3 +26,23 @@ mode_with_nc <- function(x, na.rm = FALSE) {
   }
 
 }
+
+
+#' Calculate mode without considering ties
+#'
+#' @param x Specify a vector whose mode is to be calculated
+#' @param na.rm
+#'
+#' @return
+#' @export
+#'
+#' @examples
+mode_with_out_nc <- function(x, na.rm = FALSE) {
+
+  if(na.rm){ #if na.rm is TRUE, remove NA values from input x
+    x = x[!is.na(x)]
+  }
+
+  val <- unique(x)
+  return(val[which.max(tabulate(match(x, val)))])
+}
