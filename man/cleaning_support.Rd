@@ -11,9 +11,8 @@ cleaning_support(
   input_df_choices,
   input_df_cleaning_log,
   input_vars_to_remove_from_data = c("deviceid", "audit", "audit_URL", "instance_name",
-    "complainant_name", "complainant_id", "respondent_telephone", "name_pers_recording",
-    "geopoint", "_geopoint_latitude", "_geopoint_longitude", "_geopoint_altitude",
-    "_geopoint_precision")
+    "complainant_name", "complainant_id", "respondent_telephone", "name_pers_recording"),
+  input_geopoint_col = "geopoint"
 )
 }
 \arguments{
@@ -26,6 +25,8 @@ cleaning_support(
 \item{input_df_cleaning_log}{Specify the data frame for the cleaning/checking log}
 
 \item{input_vars_to_remove_from_data}{Specify a vector of columns to blank. This is especially to handle PII columns in the dataset.}
+
+\item{input_geopoint_col}{Specify column name for the geopoint}
 }
 \value{
 Data frame of cleaned data

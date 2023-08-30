@@ -6,6 +6,7 @@
 #' @param input_df_choices Specify the data frame for the choices sheet
 #' @param input_df_cleaning_log Specify the data frame for the cleaning/checking log
 #' @param input_vars_to_remove_from_data Specify a vector of columns to blank. This is especially to handle PII columns in the dataset.
+#' @param input_geopoint_col Specify column name for the geopoint
 #'
 #' @return Data frame of cleaned data
 #' @export
@@ -23,12 +24,8 @@ cleaning_support <- function(input_df_raw_data,
                                                                  "complainant_name",
                                                                  "complainant_id",
                                                                  "respondent_telephone",
-                                                                 "name_pers_recording",
-                                                                 "geopoint",
-                                                                 "_geopoint_latitude",
-                                                                 "_geopoint_longitude",
-                                                                 "_geopoint_altitude",
-                                                                 "_geopoint_precision")) {
+                                                                 "name_pers_recording"),
+                             input_geopoint_col = "geopoint") {
 
   # find all new choices to add to choices sheet
 
@@ -85,9 +82,17 @@ cleaning_support <- function(input_df_raw_data,
   kbo_cleaned <- kobold::kobold_cleaner(kbo_modified)
 
   # handling Personally Identifiable Information(PII)
+  # update columns to remove
+  latitude_col <- paste0("_", input_geopoint_col, "_latitude")
+  longitude_col <- paste0("_", input_geopoint_col, "_longitude")
+  altitude_col <- paste0("_", input_geopoint_col, "_altitude")
+  precision_col <- paste0("_", input_geopoint_col, "_precision")
 
+  vars_to_remove_from_data <- c(input_vars_to_remove_from_data,
+                                input_geopoint_col, latitude_col, longitude_col,
+                                altitude_col, precision_col)
   df_handle_pii <- kbo_cleaned$data %>%
-    mutate(across(any_of(input_vars_to_remove_from_data), .fns = ~na_if(., .)))
+    mutate(across(any_of(vars_to_remove_from_data), .fns = ~na_if(., .)))
 
   # handling added responses after starting data collection and added responses in the cleaning process
 
