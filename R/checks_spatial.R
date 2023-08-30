@@ -146,6 +146,7 @@ check_pt_number_not_in_samples <- function(input_tool_data,
 #' @param input_location_col Specify the location description column
 #' @param input_point_id_col Specify the point id column
 #' @param input_threshold_dist Specify threshold distance. Default is 150m
+#' @param input_geopoint_col Specify column name for the geopoint
 #'
 #' @return Data frame with surveys collected at a distance greater than the specified threshold distance
 #' @export
@@ -157,7 +158,10 @@ check_threshold_distance <- function(input_sample_data,
                                      input_enumerator_id_col = "enumerator_id",
                                      input_location_col,
                                      input_point_id_col,
-                                     input_threshold_dist = 150) {
+                                     input_threshold_dist = 150,
+                                     input_geopoint_col = "geopoint") {
+  latitude_col <- paste0("_", input_geopoint_col, "_latitude")
+  longitude_col <- paste0("_", input_geopoint_col, "_longitude")
 
   if("status" %in% colnames(input_tool_data)){
     df_sample_data_thresh <- input_sample_data %>%
@@ -166,7 +170,7 @@ check_threshold_distance <- function(input_sample_data,
 
     df_tool_data_thresh <- input_tool_data %>%
       mutate(unique_pt_number = paste0(status, "_", !!sym(input_point_id_col) )) %>%
-      sf::st_as_sf(coords = c("_geopoint_longitude","_geopoint_latitude"), crs = 4326)
+      sf::st_as_sf(coords = c(longitude_col, latitude_col), crs = 4326)
   }else{
     df_sample_data_thresh <- input_sample_data %>%
       mutate(unique_pt_number = Name) %>%
@@ -174,7 +178,7 @@ check_threshold_distance <- function(input_sample_data,
 
     df_tool_data_thresh <- input_tool_data %>%
       mutate(unique_pt_number = !!sym(input_point_id_col)) %>%
-      sf::st_as_sf(coords = c("_geopoint_longitude","_geopoint_latitude"), crs = 4326)
+      sf::st_as_sf(coords = c(longitude_col, latitude_col), crs = 4326)
   }
 
 

@@ -10,7 +10,8 @@ check_threshold_distance(
   input_enumerator_id_col = "enumerator_id",
   input_location_col,
   input_point_id_col,
-  input_threshold_dist = 150
+  input_threshold_dist = 150,
+  input_geopoint_col = "geopoint"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ check_threshold_distance(
 \item{input_point_id_col}{Specify the point id column}
 
 \item{input_threshold_dist}{Specify threshold distance. Default is 150m}
+
+\item{input_geopoint_col}{Specify column name for the geopoint}
 }
 \value{
 Data frame with surveys collected at a distance greater than the specified threshold distance
