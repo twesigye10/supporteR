@@ -9,6 +9,7 @@ to kobo to support spatial checks during data collection}
 samples_for_kobo(
   input_gis_pt_layer,
   input_pt_no_col = "pt_num",
+  output_pt_no_col = "pt_num",
   output_longitude_col = "longitude",
   output_latitude_col = "latitude",
   output_description_col = "description",
@@ -20,6 +21,8 @@ samples_for_kobo(
 \item{input_gis_pt_layer}{Specify the layer where to extract data}
 
 \item{input_pt_no_col}{Specify the input point number column}
+
+\item{output_pt_no_col}{Specify the point number id column to output}
 
 \item{output_longitude_col}{Specify the longitude column to output}
 
