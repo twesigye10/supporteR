@@ -45,7 +45,7 @@ samples_for_kobo <- function(input_gis_pt_layer,
       message(paste("Folder created :", output_folder_name))
     }
     # export the data
-    readr::write_csv(x = data_extraction, file = paste0(output_folder_name, "/", output_file_name, ".csv"))
+    readr::write_csv(x = data_extraction, file = paste0(output_folder_name, "/", butteR::date_file_prefix(), "_", output_file_name, ".csv"))
   }else{
     stop("The provided layer is not a point layer!")
   }
