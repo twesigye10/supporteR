@@ -36,7 +36,7 @@ samples_for_kobo <- function(input_gis_pt_layer,
     mutate( !!paste0("i.check.", input_pt_no_col) := as.character(!!sym(input_pt_no_col)),
             !!paste0("i.check.", output_latitude_col) := sf::st_coordinates(.)[,1],
             !!paste0("i.check.", output_longitude_col) := sf::st_coordinates(.)[,2],
-            !!paste0("i.check.", output_description_col) := as.character(!!sym(output_description_col)) ) %>%
+            !!paste0("i.check.", output_description_col) := as.character(!!sym(input_pt_no_col)) ) %>%
       sf::st_drop_geometry() %>%
       batch_select_rename()
     # check if folder exists and if not create it
