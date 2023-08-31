@@ -26,7 +26,7 @@ samples_for_kobo <- function(input_gis_pt_layer,
   if(sf::st_is(x = input_gis_pt_layer[1,],type = "POINT")){
     # get coordinate system
     current_cs <- st_crs(input_gis_pt_layer)
-    if(current_cs %in% c("EPSG:4326")){
+    if(current_cs$input %in% c("EPSG:4326")){
       data_extraction_layer <- input_gis_pt_layer
     }else{
       data_extraction_layer <- sf::st_transform(input_gis_pt_layer, crs = 4326)
