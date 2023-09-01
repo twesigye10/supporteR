@@ -26,7 +26,7 @@ samples_for_kobo <- function(input_gis_pt_layer,
   # test type of the geometry in the layer
   if(sf::st_is(x = input_gis_pt_layer[1,],type = "POINT")){
     # get coordinate system
-    current_cs <- st_crs(input_gis_pt_layer)
+    current_cs <- sf::st_crs(input_gis_pt_layer)
     if(current_cs$input %in% c("EPSG:4326")){
       data_extraction_layer <- input_gis_pt_layer
     }else{
@@ -34,7 +34,7 @@ samples_for_kobo <- function(input_gis_pt_layer,
     }
     # add and format columns
     data_extraction <- data_extraction_layer %>%
-      mutate( !!paste0("i.check.", output_pt_no_col) := as.character(!!sym(input_pt_no_col)),
+      dplyr::mutate( !!paste0("i.check.", output_pt_no_col) := as.character(!!sym(input_pt_no_col)),
               !!paste0("i.check.", output_latitude_col) := sf::st_coordinates(.)[,1],
               !!paste0("i.check.", output_longitude_col) := sf::st_coordinates(.)[,2],
               !!paste0("i.check.", output_description_col) := as.character(!!sym(input_pt_no_col)) ) %>%
