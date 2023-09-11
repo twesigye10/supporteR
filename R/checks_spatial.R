@@ -23,8 +23,9 @@ check_duplicate_pt_numbers <- function(input_tool_data,
              !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
              !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
              !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col)) %>%
-      mutate(unique_pt_number = paste0(status, "_", !!sym(input_point_id_col) )) %>%
-      group_by(!!paste0("i.check.", input_location_col), status, !!paste0("i.check.", input_point_id_col)) %>%
+      mutate(unique_pt_number = paste0(status, "_", !!sym(input_point_id_col)),
+             grp_unique_pt_num = paste0(!!sym(input_location_col), "_", status, "_", !!sym(input_point_id_col))) %>%
+      group_by(grp_unique_pt_num) %>%
       filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
              i.check.name = input_point_id_col,
@@ -49,8 +50,9 @@ check_duplicate_pt_numbers <- function(input_tool_data,
              !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)),
              !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
              !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col)) %>%
-      mutate(unique_pt_number = !!sym(input_point_id_col)) %>%
-      group_by(!!paste0("i.check.", input_location_col), !!paste0("i.check.", input_point_id_col)) %>%
+      mutate(unique_pt_number = !!sym(input_point_id_col),
+             grp_unique_pt_num = paste0(!!sym(input_location_col), "_", !!sym(input_point_id_col))) %>%
+      group_by(grp_unique_pt_num) %>%
       filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
       mutate(i.check.type = "change_response",
              i.check.name = input_point_id_col,
