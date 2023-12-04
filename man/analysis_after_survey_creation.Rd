@@ -5,12 +5,21 @@
 \title{Analysis after survey creation
 This function helps to analyse the data. It is based on butteR::survey_collapse.}
 \usage{
-analysis_after_survey_creation(input_svy_obj, input_dap)
+analysis_after_survey_creation(
+  input_svy_obj,
+  input_dap,
+  population_type = "refugee",
+  main_subset = NULL
+)
 }
 \arguments{
 \item{input_svy_obj}{Input survey object. The object is created using srvyr::as_survey.}
 
 \item{input_dap}{Input dap. The dap template has columns 'variable', 'split', 'subset_1'.}
+
+\item{population_type}{Population type to add this column to the results}
+
+\item{main_subset}{second subset not specified in the dap}
 }
 \description{
 Analysis after survey creation
