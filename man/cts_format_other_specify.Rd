@@ -6,8 +6,7 @@
 \usage{
 cts_format_other_specify(
   input_tool_data,
-  input_enumerator_id_col = "enumerator_id",
-  input_location_col = "district_name",
+  input_uuid_col = "_uuid",
   input_survey,
   input_choices
 )
@@ -15,9 +14,7 @@ cts_format_other_specify(
 \arguments{
 \item{input_tool_data}{Specify the data frame for the tool data}
 
-\item{input_enumerator_id_col}{Specify the enumerator id column}
-
-\item{input_location_col}{Specify the column for location description in the dataset}
+\item{input_uuid_col}{Specify the uuid column}
 
 \item{input_survey}{Specify the data frame for the survey sheet}
 
@@ -28,8 +25,7 @@ Cleaningtools format other specify
 }
 \examples{
 cts_format_other_specify(input_repeat_data = df_tool_data_protection_risky_places,
-                         input_enumerator_id_col = "enumerator_id",
-                         input_location_col = "district_name",
+                         input_uuid_col = "_uuid",
                          input_survey = df_survey,
                          input_choices = df_choices)
 

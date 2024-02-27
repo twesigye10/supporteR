@@ -256,32 +256,28 @@ extract_other_specify_data_repeats <- function(input_repeat_data,
 #' Cleaningtools format other specify
 #'
 #' @param input_tool_data Specify the data frame for the tool data
-#' @param input_enumerator_id_col Specify the enumerator id column
-#' @param input_location_col Specify the column for location description in the dataset
+#' @param input_uuid_col Specify the uuid column
 #' @param input_survey Specify the data frame for the survey sheet
 #' @param input_choices Specify the data frame for the choices sheet
+
 #'
 #' @return
 #' @export
 #'
 #' @examples
 #' cts_format_other_specify(input_repeat_data = df_tool_data_protection_risky_places,
-#'                          input_enumerator_id_col = "enumerator_id",
-#'                          input_location_col = "district_name",
+#'                          input_uuid_col = "_uuid",
 #'                          input_survey = df_survey,
 #'                          input_choices = df_choices)
 #'
 cts_format_other_specify <- function(input_tool_data,
-                                     input_enumerator_id_col = "enumerator_id",
-                                     input_location_col = "district_name",
+                                     input_uuid_col = "_uuid",
                                      input_survey,
                                      input_choices) {
 
   # add and rename some columns
   df_data <- input_tool_data %>%
-    mutate(i.check.uuid = `_uuid`,
-           i.check.start_date = as_date(start),
-           !!paste0("i.check.", input_enumerator_id_col) := as.character(!!sym(input_enumerator_id_col)))
+    mutate(!!paste0("i.check.", input_uuid_col) := as.character(!!sym(input_uuid_col)))
 
   # get questions with other
   others_colnames <-  df_data %>%
@@ -294,9 +290,6 @@ cts_format_other_specify <- function(input_tool_data,
                                              df_data %>%
                                                select(-contains("/")) %>%
                                                select(i.check.uuid,
-                                                      i.check.start_date,
-                                                      !!paste0("i.check.", input_enumerator_id_col),
-                                                      !!paste0("i.check.", input_location_col),
                                                       other_text = as.character(.x),
                                                       current_value = str_replace_all(string = .x, pattern = "_other$", replacement = "")) %>%
                                                filter(!is.na(other_text), !other_text %in% c(" ", "NA")) %>%
@@ -309,7 +302,7 @@ cts_format_other_specify <- function(input_tool_data,
 
   # arrange the data
   df_data_arranged <- df_other_response_data %>%
-    arrange(i.check.start_date, i.check.uuid)
+    arrange(i.check.uuid)
 
   # get choices to add to the _other responses extracted
   df_grouped_choices <- input_choices %>%
@@ -344,7 +337,7 @@ cts_format_other_specify <- function(input_tool_data,
     filter(str_detect(select_type, c("select_one|select one"))) %>%
     mutate(i.check.change_type = "change_response") %>%
     slice(rep(1:n(), each = 2)) %>%
-    group_by(i.check.uuid, i.check.start_date, !!paste0("i.check.", input_enumerator_id_col), i.check.change_type,  name, current_value) %>%
+    group_by(i.check.uuid, i.check.change_type,  name, current_value) %>%
     mutate(rank = row_number(),
            i.check.question = case_when(rank == 1 ~ other_name,
                                         rank == 2 ~ name),
@@ -358,9 +351,9 @@ cts_format_other_specify <- function(input_tool_data,
   # select_multiple checks
   output$select_mu_data <- df_join_other_response_with_choices %>%
     filter(str_detect(select_type, c("select_multiple|select multiple"))) %>%
-    mutate(i.check.type = "change_response") %>%
+    mutate(i.check.change_type = "change_response") %>%
     slice(rep(1:n(), each = 3)) %>%
-    group_by(i.check.uuid, i.check.start_date, !!paste0("i.check.", input_enumerator_id_col), i.check.type,  name, current_value) %>%
+    group_by(i.check.uuid, i.check.change_type,  name, current_value) %>%
     mutate(rank = row_number(),
            i.check.question = case_when(rank == 1 ~ other_name,
                                         rank == 2 ~ paste0(name, "/", int.my_current_val_extract),
