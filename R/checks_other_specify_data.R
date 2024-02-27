@@ -321,11 +321,7 @@ cts_format_other_specify <- function(input_tool_data,
     left_join(df_grouped_choices, by = "list_name") %>%
     mutate(issue_id = "other_checks",
            issue = "recode other",
-           checked_by = "",
-           checked_date = as_date(today()),
-           comment = "",
-           reviewed = "",
-           adjust_log = ""
+           comment = ""
     ) %>%
     filter(str_detect(string = current_value, pattern = "other\\b|\\w+_other\\b"))
 
