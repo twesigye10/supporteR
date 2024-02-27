@@ -277,7 +277,7 @@ cts_format_other_specify <- function(input_tool_data,
 
   # add and rename some columns
   df_data <- input_tool_data %>%
-    mutate(!!paste0("i.check.", input_uuid_col) := as.character(!!sym(input_uuid_col)))
+    mutate("i.check.uuid" := as.character(!!sym(input_uuid_col)))
 
   # get questions with other
   others_colnames <-  df_data %>%
