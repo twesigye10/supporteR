@@ -265,7 +265,7 @@ extract_other_specify_data_repeats <- function(input_repeat_data,
 #' @export
 #'
 #' @examples
-#' cts_format_other_specify(input_repeat_data = df_tool_data_protection_risky_places,
+#' cts_format_other_specify(input_tool_data = df_tool_data,
 #'                          input_uuid_col = "_uuid",
 #'                          input_survey = df_survey,
 #'                          input_choices = df_choices)
@@ -319,8 +319,7 @@ cts_format_other_specify <- function(input_tool_data,
   # join other responses with choice options based on list_name
   df_join_other_response_with_choices <- df_data_parent_qns %>%
     left_join(df_grouped_choices, by = "list_name") %>%
-    mutate(issue_id = "other_checks",
-           issue = "recode other",
+    mutate(issue = "recode other",
            comment = ""
     ) %>%
     filter(str_detect(string = current_value, pattern = "other\\b|\\w+_other\\b"))
@@ -369,5 +368,133 @@ cts_format_other_specify <- function(input_tool_data,
            i.check.other_text = other_text,
            i.check.comment = comment,
            i.check.so_sm_choices = choice_options) %>%
+    batch_select_rename()
+}
+
+
+#' Cleaningtools format other specify repeats
+#'
+#' @param input_repeat_data Specify the data frame for the repeat data.
+#' @param input_uuid_col Specify the uuid column
+#' @param input_survey Specify the data frame for the survey sheet
+#' @param input_choices Specify the data frame for the choices sheet
+#' @param input_sheet_name Specify the sheet name as in the tool
+#' @param input_index_col Specify the index column in the repeat data
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' cts_format_other_specify_repeats <- function(input_repeat_data = df_repeat_health,
+#'                                              input_uuid_col = "_submission__uuid",
+#'                                              input_survey = df_survey,
+#'                                              input_choices = df_choices,
+#'                                              input_sheet_name = "health,
+#'                                              input_index_col = "_index")
+#'
+cts_format_other_specify_repeats <- function(input_repeat_data,
+                                             input_uuid_col = "_submission__uuid",
+                                             input_survey,
+                                             input_choices,
+                                             input_sheet_name,
+                                             input_index_col = "_index") {
+
+  # add and rename some columns
+  df_data <- input_repeat_data %>%
+    mutate("i.check.uuid" := as.character(!!sym(input_uuid_col)),
+           "index" := as.character(!!sym(input_index_col)))
+
+  # get questions with other
+  others_colnames <-  df_data %>%
+    select(ends_with("_other"), -contains("/")) %>%
+    colnames()
+
+  # data.frame for holding _other response data
+  df_other_response_data <- purrr::map_dfr(.x = others_colnames,
+                                           .f = ~{
+                                             df_data %>%
+                                               select(-contains("/")) %>%
+                                               select(i.check.uuid,
+                                                      other_text = as.character(.x),
+                                                      current_value = str_replace_all(string = .x, pattern = "_other$", replacement = ""),
+                                                      index) %>%
+                                               filter(!is.na(other_text), !other_text %in% c(" ", "NA")) %>%
+                                               mutate(other_name = .x,
+                                                      int.my_current_val_extract = ifelse(str_detect(current_value, "\\bother\\b"), str_extract_all(string = current_value, pattern = "\\bother\\b|\\w+_other\\b"), current_value),
+                                                      value = "",
+                                                      parent_qn = str_replace_all(string = .x, pattern = "_other$", replacement = ""),
+                                                      across(.cols = !contains("date"), .fns = as.character))
+                                           })
+
+
+  # arrange the data
+  df_data_arranged <- df_other_response_data %>%
+    arrange(i.check.uuid, index)
+
+  # get choices to add to the _other responses extracted
+  df_grouped_choices <- input_choices %>%
+    group_by(list_name) %>%
+    summarise(choice_options = stringr::str_trunc(paste(name, collapse = " : "), 1000)) %>%
+    arrange(list_name)
+
+  # extract parent question and join survey for extracting list_name
+  df_data_parent_qns <- df_data_arranged %>%
+    left_join(input_survey %>% select(name, type), by = c("parent_qn"="name")) %>%
+    separate(col = type, into = c("select_type", "list_name"), sep =" ", remove = TRUE, extra = "drop" ) %>%
+    rename(name = parent_qn)
+
+  # join other responses with choice options based on list_name
+  df_join_other_response_with_choices <- df_data_parent_qns %>%
+    left_join(df_grouped_choices, by = "list_name") %>%
+    mutate(issue = "recode other",
+           comment = ""
+    ) %>%
+    filter(str_detect(string = current_value, pattern = "other\\b|\\w+_other\\b"))
+
+  # care for select_one and select_multiple (change_response, add_option, remove_option)
+  output <- list()
+  # select_one checks
+  output$select_one <- df_join_other_response_with_choices %>%
+    filter(str_detect(select_type, c("select_one|select one"))) %>%
+    mutate(i.check.change_type = "change_response") %>%
+    slice(rep(1:n(), each = 2)) %>%
+    group_by(i.check.uuid, index, i.check.change_type,  name, current_value) %>%
+    mutate(rank = row_number(),
+           i.check.question = case_when(rank == 1 ~ other_name,
+                                        rank == 2 ~ name),
+           i.check.old_value = case_when(rank == 1 ~ as.character(other_text),
+                                         rank == 2 ~ as.character(current_value)),
+           i.check.new_value = case_when(rank == 1 ~ "NA",
+                                         rank == 2 ~ NA_character_)
+    ) %>%
+    ungroup()
+
+  # select_multiple checks
+  output$select_mu_data <- df_join_other_response_with_choices %>%
+    filter(str_detect(select_type, c("select_multiple|select multiple"))) %>%
+    mutate(i.check.change_type = "change_response") %>%
+    slice(rep(1:n(), each = 3)) %>%
+    group_by(i.check.uuid, index, i.check.change_type,  name, current_value) %>%
+    mutate(rank = row_number(),
+           i.check.question = case_when(rank == 1 ~ other_name,
+                                        rank == 2 ~ paste0(name, "/", int.my_current_val_extract),
+                                        rank == 3 ~ paste0(name, "/")),
+           i.check.old_value = case_when(rank == 1 ~ as.character(other_text),
+                                         rank == 2 ~ "1",
+                                         rank == 3 ~ NA_character_),
+           i.check.new_value = case_when(rank == 1 ~ NA_character_,
+                                         rank == 2 ~ "0",
+                                         rank == 3 ~ NA_character_)
+    ) %>%
+    ungroup()
+
+  # merge other checks
+  merged_other_checks <- bind_rows(output) %>%
+    mutate(i.check.issue = issue,
+           i.check.other_text = other_text,
+           i.check.comment = comment,
+           i.check.so_sm_choices = choice_options,
+           i.check.sheet = input_sheet_name,
+           i.check.index = index) %>%
     batch_select_rename()
 }

@@ -24,7 +24,7 @@ cts_format_other_specify(
 Cleaningtools format other specify
 }
 \examples{
-cts_format_other_specify(input_repeat_data = df_tool_data_protection_risky_places,
+cts_format_other_specify(input_tool_data = df_tool_data,
                          input_uuid_col = "_uuid",
                          input_survey = df_survey,
                          input_choices = df_choices)
