@@ -26,3 +26,28 @@ checks_duplicate_uuids <- function(input_tool_data) {
       i.check.so_sm_choices = "") %>%
     batch_select_rename()
 }
+
+#' Cleaningtools format check data for duplicate uuids
+#'
+#' @param input_tool_data Specify the data frame for the tool data
+#'
+#' @return
+#' @export
+#'
+#' @examples
+cts_checks_duplicate_uuids <- function(input_tool_data) {
+  input_tool_data %>%
+    dplyr::group_by(i.check.uuid) %>%
+    dplyr::filter(row_number()  > 1) %>%
+    dplyr::mutate(
+      i.check.change_type = "remove_survey",
+      i.check.question = "uuid",
+      i.check.old_value = "",
+      i.check.new_value = "",
+      i.check.issue = glue("The uuid is duplicate in the data"),
+      i.check.other_text = "",
+      i.check.comment = "",
+      i.check.reviewed = "",
+      i.check.so_sm_choices = "") %>%
+    batch_select_rename()
+}
