@@ -265,12 +265,12 @@ extract_other_specify_data_repeats <- function(input_repeat_data,
 #' @export
 #'
 #' @examples
-#' cts_format_other_specify(input_tool_data = df_tool_data,
+#' cts_other_specify(input_tool_data = df_tool_data,
 #'                          input_uuid_col = "_uuid",
 #'                          input_survey = df_survey,
 #'                          input_choices = df_choices)
 #'
-cts_format_other_specify <- function(input_tool_data,
+cts_other_specify <- function(input_tool_data,
                                      input_uuid_col = "_uuid",
                                      input_survey,
                                      input_choices) {
@@ -367,6 +367,7 @@ cts_format_other_specify <- function(input_tool_data,
     mutate(i.check.issue = issue,
            i.check.other_text = other_text,
            i.check.comment = comment,
+           i.check.reviewed = "",
            i.check.so_sm_choices = choice_options) %>%
     batch_select_rename()
 }
@@ -385,14 +386,14 @@ cts_format_other_specify <- function(input_tool_data,
 #' @export
 #'
 #' @examples
-#' cts_format_other_specify_repeats <- function(input_repeat_data = df_repeat_health,
+#' cts_other_specify_repeats <- function(input_repeat_data = df_repeat_health,
 #'                                              input_uuid_col = "_submission__uuid",
 #'                                              input_survey = df_survey,
 #'                                              input_choices = df_choices,
 #'                                              input_sheet_name = "health,
 #'                                              input_index_col = "_index")
 #'
-cts_format_other_specify_repeats <- function(input_repeat_data,
+cts_other_specify_repeats <- function(input_repeat_data,
                                              input_uuid_col = "_submission__uuid",
                                              input_survey,
                                              input_choices,
@@ -493,6 +494,7 @@ cts_format_other_specify_repeats <- function(input_repeat_data,
     mutate(i.check.issue = issue,
            i.check.other_text = other_text,
            i.check.comment = comment,
+           i.check.reviewed = "",
            i.check.so_sm_choices = choice_options,
            i.check.sheet = input_sheet_name,
            i.check.index = index) %>%
