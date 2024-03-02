@@ -313,7 +313,6 @@ cts_check_duplicate_pt_numbers <- function(input_tool_data,
 #'
 #' @param input_tool_data Specify the data frame for the tool data
 #' @param input_uuid_col Specify the uuid column
-#' @param input_location_col Specify the location description column
 #' @param input_point_id_col Specify the point id column
 #' @param input_sample_pt_nos_list Specify a list of sample point numbers
 #'
@@ -324,7 +323,6 @@ cts_check_duplicate_pt_numbers <- function(input_tool_data,
 #'
 cts_check_pt_number_not_in_samples <- function(input_tool_data,
                                                input_uuid_col = "_uuid",
-                                               input_location_col,
                                                input_point_id_col,
                                                input_sample_pt_nos_list) {
   if("status" %in% colnames(input_tool_data)){
@@ -369,7 +367,6 @@ cts_check_pt_number_not_in_samples <- function(input_tool_data,
 #' @param input_sample_data Specify a GIS layer with sample data
 #' @param input_tool_data Specify the data frame for the tool data with "_geopoint_longitude" and "_geopoint_latitude" columns
 #' @param input_uuid_col Specify the uuid column
-#' @param input_location_col Specify the location description column
 #' @param input_point_id_col Specify the point id column
 #' @param input_threshold_dist Specify threshold distance. Default is 150m
 #' @param input_geopoint_col Specify column name for the geopoint
@@ -382,7 +379,6 @@ cts_check_pt_number_not_in_samples <- function(input_tool_data,
 cts_check_threshold_distance <- function(input_sample_data,
                                          input_tool_data,
                                          input_uuid_col = "_uuid",
-                                         input_location_col,
                                          input_point_id_col,
                                          input_threshold_dist = 150,
                                          input_geopoint_col = "geopoint") {

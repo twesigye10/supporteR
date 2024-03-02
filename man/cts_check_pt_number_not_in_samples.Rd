@@ -7,7 +7,6 @@
 cts_check_pt_number_not_in_samples(
   input_tool_data,
   input_uuid_col = "_uuid",
-  input_location_col,
   input_point_id_col,
   input_sample_pt_nos_list
 )
@@ -16,8 +15,6 @@ cts_check_pt_number_not_in_samples(
 \item{input_tool_data}{Specify the data frame for the tool data}
 
 \item{input_uuid_col}{Specify the uuid column}
-
-\item{input_location_col}{Specify the location description column}
 
 \item{input_point_id_col}{Specify the point id column}
 
