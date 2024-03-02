@@ -242,3 +242,220 @@ check_threshold_distance <- function(input_sample_data,
       batch_select_rename()
   }
 }
+
+
+# cleaning tools format ---------------------------------------------------
+
+#' Cleaningtools format check duplicate point numbers
+#'
+#' @param input_tool_data Specify the data frame for the tool data
+#' @param input_uuid_col Specify the uuid column
+#' @param input_location_col Specify the location description column
+#' @param input_point_id_col Specify the point id column
+#' @param input_sample_pt_nos_list Specify a list of sample point numbers
+#'
+#' @return Data frame of surveys with duplicate point ids
+#' @export
+#'
+#' @examples
+#'
+cts_check_duplicate_pt_numbers <- function(input_tool_data,
+                                           input_uuid_col = "_uuid",
+                                           input_location_col,
+                                           input_point_id_col,
+                                           input_sample_pt_nos_list) {
+  if("status" %in% colnames(input_tool_data)){
+    input_tool_data %>%
+      mutate("i.check.uuid" := as.character(!!sym(input_uuid_col))) %>%
+      mutate(unique_pt_number = paste0(status, "_", !!sym(input_point_id_col)),
+             grp_unique_pt_num = paste0(!!sym(input_location_col), "_", status, "_", !!sym(input_point_id_col))) %>%
+      group_by(grp_unique_pt_num) %>%
+      filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
+      mutate(i.check.change_type = "change_response",
+             i.check.question = input_point_id_col,
+             i.check.old_value = as.character(!!sym(input_point_id_col)),
+             i.check.new_value = "",
+             i.check.issue = "spatial_c_duplicate_pt_no",
+             i.check.description = paste0(input_point_id_col, ": ", !!sym(input_point_id_col), " is duplicated: check that its not a repeated survey"),
+             i.check.other_text = "",
+             i.check.comment = "",
+             i.check.reviewed = "",
+             i.check.so_sm_choices = "") %>%
+      ungroup() %>%
+      dplyr::select(starts_with("i.check"))%>%
+      rename_with(~str_replace(string = .x, pattern = "i.check.", replacement = ""))
+  }else{
+    input_tool_data %>%
+      mutate("i.check.uuid" := as.character(!!sym(input_uuid_col))) %>%
+      mutate(unique_pt_number = !!sym(input_point_id_col),
+             grp_unique_pt_num = paste0(!!sym(input_location_col), "_", !!sym(input_point_id_col))) %>%
+      group_by(grp_unique_pt_num) %>%
+      filter(n() > 1, unique_pt_number %in% input_sample_pt_nos_list) %>%
+      mutate(i.check.change_type = "change_response",
+             i.check.question = input_point_id_col,
+             i.check.old_value = as.character(!!sym(input_point_id_col)),
+             i.check.new_value = "",
+             i.check.issue = "spatial_c_duplicate_pt_no",
+             i.check.description = paste0(input_point_id_col,": ", !!sym(input_point_id_col)," is duplicated: check that its not a repeated survey"),
+             i.check.other_text = "",
+             i.check.comment = "",
+             i.check.reviewed = "",
+             i.check.so_sm_choices = "") %>%
+      ungroup() %>%
+      batch_select_rename()
+  }
+
+}
+
+
+
+#' Cleaningtools format check for point numbers not in samples
+#'
+#' @param input_tool_data Specify the data frame for the tool data
+#' @param input_uuid_col Specify the uuid column
+#' @param input_location_col Specify the location description column
+#' @param input_point_id_col Specify the point id column
+#' @param input_sample_pt_nos_list Specify a list of sample point numbers
+#'
+#' @return Data frame of surveys with specified point numbers that are not in the samples
+#' @export
+#'
+#' @examples
+#'
+cts_check_pt_number_not_in_samples <- function(input_tool_data,
+                                               input_uuid_col = "_uuid",
+                                               input_location_col,
+                                               input_point_id_col,
+                                               input_sample_pt_nos_list) {
+  if("status" %in% colnames(input_tool_data)){
+    input_tool_data %>%
+      mutate("i.check.uuid" := as.character(!!sym(input_uuid_col))) %>%
+      mutate(unique_pt_number = paste0(status, "_", !!sym(input_point_id_col) )) %>%
+      filter(!unique_pt_number %in% input_sample_pt_nos_list) %>%
+      mutate(i.check.change_type = "change_response",
+             i.check.question = input_point_id_col,
+             i.check.old_value = as.character(!!sym(input_point_id_col)),
+             i.check.new_value = "",
+             i.check.issue = "spatial_c_pt_no_not_in_sample",
+             i.check.description = paste0(input_point_id_col,": ",!!sym(input_point_id_col), " not in samples"),
+             i.check.other_text = "",
+             i.check.comment = "",
+             i.check.reviewed = "",
+             i.check.so_sm_choices = "") %>%
+      batch_select_rename()
+  }else{
+    input_tool_data %>%
+      mutate("i.check.uuid" := as.character(!!sym(input_uuid_col))) %>%
+      mutate(unique_pt_number = !!sym(input_point_id_col)) %>%
+      filter(!unique_pt_number %in% input_sample_pt_nos_list) %>%
+      mutate(i.check.change_type = "change_response",
+             i.check.question = input_point_id_col,
+             i.check.old_value = as.character(!!sym(input_point_id_col)),
+             i.check.new_value = "",
+             i.check.issue = "spatial_c_pt_no_not_in_sample",
+             i.check.description = paste0(input_point_id_col, ": ", !!sym(input_point_id_col), "not in samples"),
+             i.check.other_text = "",
+             i.check.comment = "",
+             i.check.reviewed = "",
+             i.check.so_sm_choices = "") %>%
+      batch_select_rename()
+  }
+
+}
+
+
+#' Cleaningtools format check that collected point is not at a distance greater than the threshold
+#'
+#' @param input_sample_data Specify a GIS layer with sample data
+#' @param input_tool_data Specify the data frame for the tool data with "_geopoint_longitude" and "_geopoint_latitude" columns
+#' @param input_uuid_col Specify the uuid column
+#' @param input_location_col Specify the location description column
+#' @param input_point_id_col Specify the point id column
+#' @param input_threshold_dist Specify threshold distance. Default is 150m
+#' @param input_geopoint_col Specify column name for the geopoint
+#'
+#' @return Data frame with surveys collected at a distance greater than the specified threshold distance
+#' @export
+#'
+#' @examples
+#'
+cts_check_threshold_distance <- function(input_sample_data,
+                                         input_tool_data,
+                                         input_uuid_col = "_uuid",
+                                         input_location_col,
+                                         input_point_id_col,
+                                         input_threshold_dist = 150,
+                                         input_geopoint_col = "geopoint") {
+  latitude_col <- paste0("_", input_geopoint_col, "_latitude")
+  longitude_col <- paste0("_", input_geopoint_col, "_longitude")
+
+  if("status" %in% colnames(input_tool_data)){
+    df_sample_data_thresh <- input_sample_data %>%
+      mutate(unique_pt_number = paste0(status, "_", Name )) %>%
+      sf::st_transform(4326)
+
+    df_tool_data_thresh <- input_tool_data %>%
+      mutate(unique_pt_number = paste0(status, "_", !!sym(input_point_id_col) )) %>%
+      sf::st_as_sf(coords = c(longitude_col, latitude_col), crs = 4326)
+  }else{
+    df_sample_data_thresh <- input_sample_data %>%
+      mutate(unique_pt_number = Name) %>%
+      sf::st_transform(4326)
+
+    df_tool_data_thresh <- input_tool_data %>%
+      mutate(unique_pt_number = !!sym(input_point_id_col)) %>%
+      sf::st_as_sf(coords = c(longitude_col, latitude_col), crs = 4326)
+  }
+
+
+  # sample_data_unique_pts
+  sample_data_unique_pts <- df_sample_data_thresh %>%
+    pull(unique_pt_number) %>%
+    unique()
+  # tool_data_unique_pts
+  tool_data_unique_pts <- df_tool_data_thresh %>%
+    pull(unique_pt_number) %>%
+    unique()
+
+  sample_pt_nos_thresh <- sample_data_unique_pts[sample_data_unique_pts %in% tool_data_unique_pts]
+
+  if(length(sample_pt_nos_thresh) > 0){
+
+    # tibble to hold the data
+    df_data_with_distance <- tibble()
+
+    for (pt_number in sample_pt_nos_thresh){
+      current_sample <- df_sample_data_thresh %>%
+        filter(unique_pt_number == pt_number)
+      current_tool_data <- df_tool_data_thresh %>%
+        filter(unique_pt_number == pt_number)
+
+      if(nrow(current_tool_data) > 0){
+        current_sample_target_dist <- sf::st_distance(x = current_sample, y = current_tool_data, by_element = TRUE)
+
+        current_data_with_dist <- current_tool_data %>%
+          sf::st_drop_geometry() %>%
+          mutate(distance = round(x = current_sample_target_dist, digits = 0))
+
+        df_data_with_distance <- bind_rows(df_data_with_distance, current_data_with_dist)
+      }
+    }
+
+    # format the required data
+    df_data_with_distance %>%
+      mutate("i.check.uuid" := as.character(!!sym(input_uuid_col))) %>%
+      filter(as.numeric(distance) >= input_threshold_dist) %>%
+      mutate(i.check.change_type = "remove_survey",
+             i.check.question = input_point_id_col,
+             i.check.old_value = as.character(!!sym(input_point_id_col)),
+             i.check.new_value = "",
+             i.check.issue = "spatial_c_dist_to_sample_greater_than_threshold",
+             i.check.description = glue("{distance} m greater_than_threshold: {input_threshold_dist} m"),
+             i.check.other_text = "",
+             i.check.comment = "",
+             i.check.reviewed = "",
+             i.check.so_sm_choices = "") %>%
+      batch_select_rename()
+  }
+}
+
