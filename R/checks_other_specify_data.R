@@ -366,6 +366,7 @@ cts_other_specify <- function(input_tool_data,
   merged_other_checks <- bind_rows(output) %>%
     mutate(i.check.issue = issue,
            i.check.other_text = other_text,
+           i.check.current_sm = ifelse(str_detect(select_type, c("select_multiple|select multiple")), current_value, NA_character_),
            i.check.comment = comment,
            i.check.reviewed = "",
            i.check.so_sm_choices = choice_options) %>%
@@ -493,6 +494,7 @@ cts_other_specify_repeats <- function(input_repeat_data,
   merged_other_checks <- bind_rows(output) %>%
     mutate(i.check.issue = issue,
            i.check.other_text = other_text,
+           i.check.current_sm = ifelse(str_detect(select_type, c("select_multiple|select multiple")), current_value, NA_character_),
            i.check.comment = comment,
            i.check.reviewed = "",
            i.check.so_sm_choices = choice_options,
