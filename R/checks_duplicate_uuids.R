@@ -30,13 +30,15 @@ checks_duplicate_uuids <- function(input_tool_data) {
 #' Cleaningtools format check data for duplicate uuids
 #'
 #' @param input_tool_data Specify the data frame for the tool data
+#' @param input_uuid_col Specify the uuid column
 #'
 #' @return
 #' @export
 #'
 #' @examples
-cts_checks_duplicate_uuids <- function(input_tool_data) {
+cts_checks_duplicate_uuids <- function(input_tool_data, input_uuid_col = "_uuid") {
   input_tool_data %>%
+    mutate("i.check.uuid" := as.character(!!sym(input_uuid_col))) %>%
     dplyr::group_by(i.check.uuid) %>%
     dplyr::filter(row_number()  > 1) %>%
     dplyr::mutate(

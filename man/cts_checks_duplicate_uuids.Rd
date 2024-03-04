@@ -4,10 +4,12 @@
 \alias{cts_checks_duplicate_uuids}
 \title{Cleaningtools format check data for duplicate uuids}
 \usage{
-cts_checks_duplicate_uuids(input_tool_data)
+cts_checks_duplicate_uuids(input_tool_data, input_uuid_col = "_uuid")
 }
 \arguments{
 \item{input_tool_data}{Specify the data frame for the tool data}
+
+\item{input_uuid_col}{Specify the uuid column}
 }
 \description{
 Cleaningtools format check data for duplicate uuids
