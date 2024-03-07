@@ -81,7 +81,7 @@ analysis_after_survey_creation <- function(input_svy_obj, input_dap, population_
       subset_temp <-dap_refugee_main_subset_split[[i]]
       subset_value <- unique(subset_temp$subset_1)
       vars_temp <- subset_temp %>% pull(variable)
-      ref_main_subset_subset1[[subset_value]] <- butteR::survey_collapse(df = ref_svy,
+      ref_main_subset_subset1[[subset_value]] <- butteR::survey_collapse(df = input_svy_obj,
                                                                          vars_to_analyze = vars_temp ,
                                                                          disag = c(subset_value, main_subset)
       )
