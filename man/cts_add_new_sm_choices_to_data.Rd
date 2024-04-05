@@ -8,6 +8,7 @@ This function adds new choices to be added on sm questions after data collection
 cts_add_new_sm_choices_to_data(
   input_df_tool_data,
   input_df_filled_cl,
+  input_df_survey,
   input_df_choices,
   input_sm_seperator = "/"
 )
@@ -17,7 +18,11 @@ cts_add_new_sm_choices_to_data(
 
 \item{input_df_filled_cl}{Specify the data frame for the filled cleaning log}
 
-\item{input_df_choices}{Specify the data frame for the choices in the choices sheet of the tool}
+\item{input_df_survey}{Specify the data frame for the survey sheet}
+
+\item{input_df_choices}{Specify the data frame for the choices sheet}
+
+\item{input_sm_seperator}{The seperator for select multiple}
 }
 \value{
 An updated data frame of the data with added columns for new choices

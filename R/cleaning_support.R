@@ -119,15 +119,18 @@ cleaning_support <- function(input_df_raw_data,
 
 #' Add new select multiple choices to the data
 #' This function adds new choices to be added on sm questions after data collection
+#'
 #' @param input_df_tool_data Specify the data frame for the raw data
 #' @param input_df_filled_cl Specify the data frame for the filled cleaning log
-#' @param input_df_choices Specify the data frame for the choices in the choices sheet of the tool
+#' @param input_df_survey Specify the data frame for the survey sheet
+#' @param input_df_choices Specify the data frame for the choices sheet
+#' @param input_sm_seperator The seperator for select multiple
 #'
 #' @return An updated data frame of the data with added columns for new choices
 #' @export
 #'
 #' @examples
-cts_add_new_sm_choices_to_data <- function(input_df_tool_data, input_df_filled_cl, input_df_choices, input_sm_seperator = "/") {
+cts_add_new_sm_choices_to_data <- function(input_df_tool_data, input_df_filled_cl, input_df_survey, input_df_choices, input_sm_seperator = "/") {
   # gather choice options based on unique choices list
   df_grouped_choices<- input_df_choices %>%
     group_by(list_name) %>%
@@ -143,7 +146,7 @@ cts_add_new_sm_choices_to_data <- function(input_df_tool_data, input_df_filled_c
     filter(!str_detect(string = question, pattern = "other$"), change_type %in% c("change_response")) %>%
     mutate(int.new_value = str_replace_all(string = question, pattern = sm_int_choice_regex, replacement = ""),
            int.question = str_replace_all(string = question, pattern = sm_int_question_regex, replacement = "")) %>%
-    left_join(df_survey, by = c("int.question" = "name")) %>%
+    left_join(input_df_survey, by = c("int.question" = "name")) %>%
     filter(str_detect(string = type, pattern = "select_one|select one|select_multiple|select multiple")) %>%
     separate(col = type, into = c("select_type", "list_name"), sep =" ", remove = TRUE, extra = "drop") %>%
     left_join(df_grouped_choices, by = "list_name") %>%
