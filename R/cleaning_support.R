@@ -115,3 +115,153 @@ cleaning_support <- function(input_df_raw_data,
 
   df_final_cleaned_data <- df_handle_sm_data
 }
+
+
+#' Add new select multiple choices to the data
+#' This function adds new choices to be added on sm questions after data collection
+#' @param input_df_tool_data Specify the data frame for the raw data
+#' @param input_df_filled_cl Specify the data frame for the filled cleaning log
+#' @param input_df_choices Specify the data frame for the choices in the choices sheet of the tool
+#'
+#' @return An updated data frame of the data with added columns for new choices
+#' @export
+#'
+#' @examples
+cts_add_new_sm_choices_to_data <- function(input_df_tool_data, input_df_filled_cl, input_df_choices, input_sm_seperator = "/") {
+  # gather choice options based on unique choices list
+  df_grouped_choices<- input_df_choices %>%
+    group_by(list_name) %>%
+    summarise(choice_options = paste(name, collapse = " : "))
+  # regexes
+  sm_question_regex <- paste0("\\w+\\",input_sm_seperator,"+\\w+")
+  sm_int_choice_regex <- paste0("\\w+\\",input_sm_seperator)
+  sm_int_question_regex <- paste0("\\",input_sm_seperator,"+\\w+")
+
+  # get new name and choice pairs to add to the choices sheet
+  new_vars_sm <- input_df_filled_cl %>%
+    filter(str_detect(string = question, pattern = sm_question_regex)) %>%
+    filter(!str_detect(string = question, pattern = "other$"), change_type %in% c("change_response")) %>%
+    mutate(int.new_value = str_replace_all(string = question, pattern = sm_int_choice_regex, replacement = ""),
+           int.question = str_replace_all(string = question, pattern = sm_int_question_regex, replacement = "")) %>%
+    left_join(df_survey, by = c("int.question" = "name")) %>%
+    filter(str_detect(string = type, pattern = "select_one|select one|select_multiple|select multiple")) %>%
+    separate(col = type, into = c("select_type", "list_name"), sep =" ", remove = TRUE, extra = "drop") %>%
+    left_join(df_grouped_choices, by = "list_name") %>%
+    filter(!str_detect(string = choice_options, pattern = int.new_value)) %>%
+    select(question) %>%
+    group_by(question) %>%
+    summarise(n = n())
+
+  # handle when a question had not been answered
+  df_add_columns_to_data <- input_df_tool_data %>%
+    butteR:::mutate_batch(nm = new_vars_sm$question, value = NA_character_ ) # %>%
+
+  # parent questions for select multiple
+  col_changes_parent_vars_sm <- new_vars_sm %>%
+    mutate(question = str_replace_all(string = question, pattern = paste0(input_sm_seperator,".+"), replacement = "")) %>%
+    pull(question) %>%
+    unique()
+
+  df_handle_sm_data <- df_add_columns_to_data
+
+  for (cur_sm_col in col_changes_parent_vars_sm) {
+    df_updated_data <- df_handle_sm_data %>%
+      mutate(
+        across(contains(paste0(cur_sm_col, input_sm_seperator)), .fns = ~ifelse(!is.na(!!sym(cur_sm_col)) & is.na(.) , 0, .)),
+        across(contains(paste0(cur_sm_col, input_sm_seperator)), .fns = ~ifelse(is.na(!!sym(cur_sm_col)), NA_integer_, .))
+      )
+    df_handle_sm_data <- df_updated_data
+  }
+
+  df_data_with_added_cols <- df_handle_sm_data
+}
+
+
+#' Update select multiple parent columns
+#' This function updates select multiple parent columns trying to keep the original selection order
+#' @param input_df_cleaning_step_data The output data frame from the cleaning step
+#' @param input_sm_seperator The seperator for select multiple
+#'
+#' @return A list that contains an updated data and the extra log to add to the original log used for cleaning
+#' @export
+#'
+#' @examples
+cts_update_sm_parent_cols <- function(input_df_cleaning_step_data, input_sm_seperator = "/") {
+
+  # check existance of sm columns
+  if(!str_detect(string = paste(colnames(input_df_cleaning_step_data), collapse = " "), pattern = paste0("\\",input_sm_seperator))){
+    stop("check that there are select multiple columns and the sm seperator ")
+  }
+
+  # parent column names
+  sm_parent_cols <- input_df_cleaning_step_data %>%
+    select(contains("/")) %>%
+    colnames() %>%
+    str_replace_all(pattern = "’", replacement = "") %>%
+    str_replace_all(pattern = "\\/+\\w+", replacement = "") %>%
+    unique()
+
+  # update the sm parent columns using changes made during cleaning ---------
+
+  # initialise data to be updated
+  df_handle_parent_qn_data <- input_df_cleaning_step_data
+
+  for (cur_parent_sm_col in sm_parent_cols) {
+    # test
+    print(cur_parent_sm_col)
+
+    df_updated_parent_qn_data <- df_handle_parent_qn_data %>%
+      mutate(across(.cols = starts_with(paste0(cur_parent_sm_col, "/")),
+                    .fns = ~ifelse(.x == 1 & !str_detect(string = !!sym(cur_parent_sm_col), pattern = str_replace_all(string = cur_column(), pattern = paste0(cur_parent_sm_col, "/"), replacement = "")),
+                                   str_replace_all(string = cur_column(), pattern = paste0(cur_parent_sm_col, "/"), replacement = ""),
+                                   NA_character_),
+                    .names = "check.extra.{.col}"),
+             across(.cols = starts_with(paste0(cur_parent_sm_col, "/")),
+                    .fns = ~ifelse(.x == 0 & str_detect(string = !!sym(cur_parent_sm_col), pattern = str_replace_all(string = cur_column(), pattern = paste0(cur_parent_sm_col, "/"), replacement = "")),
+                                   str_replace_all(string = cur_column(), pattern = paste0(cur_parent_sm_col, "/"), replacement = ""),
+                                   NA_character_),
+                    .names = "check.removed.{.col}")
+      ) %>%
+      unite(!!paste0("check.extra.", cur_parent_sm_col), starts_with(glue::glue("check.extra.{cur_parent_sm_col}/")), remove = TRUE, na.rm = TRUE, sep = " ") %>%
+      unite(!!paste0("check.removed.", cur_parent_sm_col), starts_with(glue::glue("check.removed.{cur_parent_sm_col}/")), remove = TRUE, na.rm = TRUE, sep = " ") %>%
+      mutate(!!paste0("check.old.", cur_parent_sm_col) := !!sym(cur_parent_sm_col),
+             !!paste0("check.reg.", cur_parent_sm_col) := ifelse(!is.na(!!sym(paste0("check.removed.", cur_parent_sm_col))), str_replace_all(string = !!sym(paste0("check.removed.", cur_parent_sm_col)), pattern = " ", replacement = "\\s?|"), NA_character_)) %>%
+      mutate(!!paste0("check.remaining.", cur_parent_sm_col) := ifelse(!(is.na(!!sym(paste0("check.reg.", cur_parent_sm_col))) | !!sym(paste0("check.reg.", cur_parent_sm_col)) %in% c("NA", "")), str_remove_all(string = !!sym(cur_parent_sm_col), pattern = !!sym(paste0("check.reg.", cur_parent_sm_col))), !!sym(cur_parent_sm_col))) %>%
+      unite(!!paste0("check.final.", cur_parent_sm_col), matches(paste0("check.remaining.", cur_parent_sm_col, "$|","check.extra.", cur_parent_sm_col, "$")), remove = FALSE, na.rm = TRUE, sep = " ") %>%
+      mutate(!!paste0("check.final.", cur_parent_sm_col) := str_trim(!!sym(paste0("check.final.", cur_parent_sm_col))),
+             !!cur_parent_sm_col := !!sym(paste0("check.final.", cur_parent_sm_col)))
+
+    df_handle_parent_qn_data <- df_updated_parent_qn_data
+  }
+
+  # extract updated data
+  df_updated_parent_cols <- df_handle_parent_qn_data
+
+  # generate extra log ------------------------------------------------------
+
+  df_log_parent_sm_cols_changes <- purrr::map_dfr(.x = sm_parent_cols,
+                                                  .f = ~ {df_updated_parent_cols %>%
+                                                      dplyr::filter(!!sym(paste0("check.old.",.x)) != !!sym(.x)) %>%
+                                                      dplyr::mutate(i.check.uuid = `_uuid`,
+                                                                    i.check.enumerator_id = enumerator_id,
+                                                                    i.check.point_number = point_number,
+                                                                    i.check.today = today,
+                                                                    i.check.meta_village_name = meta_village_name,
+                                                                    i.check.change_type = "change_response",
+                                                                    i.check.question = .x,
+                                                                    i.check.old_value = as.character(!!sym(paste0("check.old.",.x))),
+                                                                    i.check.new_value = as.character(!!sym(.x)),
+                                                                    i.check.issue = "changed parent sm column",
+                                                                    i.check.description = "Parent column changed to match children columns",
+                                                                    i.check.other_text = "",
+                                                                    i.check.comment = "",
+                                                                    i.check.reviewed = "1",
+                                                                    i.check.so_sm_choices = "") %>%
+                                                      dplyr::select(starts_with("i.check."))}) %>%
+    supporteR::batch_select_rename()
+
+  updated_sm_parent_data <- list("updated_sm_parents" = df_updated_parent_cols %>%
+                                   select(-matches("^int.|^check.")),
+                                 "extra_log_sm_parents" = df_log_parent_sm_cols_changes)
+
+}
