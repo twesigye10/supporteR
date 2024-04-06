@@ -7,13 +7,16 @@ This function updates select multiple parent columns trying to keep the original
 \usage{
 cts_update_sm_parent_cols(
   input_df_cleaning_step_data,
-  input_sm_seperator = "/"
+  input_sm_seperator = "/",
+  input_location_col
 )
 }
 \arguments{
 \item{input_df_cleaning_step_data}{The output data frame from the cleaning step}
 
 \item{input_sm_seperator}{The seperator for select multiple}
+
+\item{input_location_col}{Specify the location description column}
 }
 \value{
 A list that contains an updated data and the extra log to add to the original log used for cleaning

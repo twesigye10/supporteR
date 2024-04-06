@@ -182,14 +182,18 @@ cts_add_new_sm_choices_to_data <- function(input_df_tool_data, input_df_filled_c
 
 #' Update select multiple parent columns
 #' This function updates select multiple parent columns trying to keep the original selection order
+#'
 #' @param input_df_cleaning_step_data The output data frame from the cleaning step
 #' @param input_sm_seperator The seperator for select multiple
+#' @param input_location_col Specify the location description column
 #'
 #' @return A list that contains an updated data and the extra log to add to the original log used for cleaning
 #' @export
 #'
 #' @examples
-cts_update_sm_parent_cols <- function(input_df_cleaning_step_data, input_sm_seperator = "/") {
+cts_update_sm_parent_cols <- function(input_df_cleaning_step_data,
+                                      input_sm_seperator = "/",
+                                      input_location_col) {
 
   # check existance of sm columns
   if(!str_detect(string = paste(colnames(input_df_cleaning_step_data), collapse = " "), pattern = paste0("\\",input_sm_seperator))){
@@ -254,7 +258,7 @@ cts_update_sm_parent_cols <- function(input_df_cleaning_step_data, input_sm_sepe
                                                                     i.check.enumerator_id = enumerator_id,
                                                                     i.check.point_number = point_number,
                                                                     i.check.today = today,
-                                                                    i.check.meta_village_name = meta_village_name,
+                                                                    !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
                                                                     i.check.change_type = "change_response",
                                                                     i.check.question = .x,
                                                                     i.check.old_value = as.character(!!sym(paste0("check.old.",.x))),
