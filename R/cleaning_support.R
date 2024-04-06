@@ -185,6 +185,10 @@ cts_add_new_sm_choices_to_data <- function(input_df_tool_data, input_df_filled_c
 #'
 #' @param input_df_cleaning_step_data The output data frame from the cleaning step
 #' @param input_sm_seperator The seperator for select multiple
+#' @param input_uuid_col Specify the uuid column
+#' @param input_enumerator_id_col Specify the enumerator id column
+#' @param input_point_id_col Specify the point id column
+#' @param input_collected_date_col Specify the column for the date of data collection
 #' @param input_location_col Specify the location description column
 #'
 #' @return A list that contains an updated data and the extra log to add to the original log used for cleaning
@@ -193,6 +197,10 @@ cts_add_new_sm_choices_to_data <- function(input_df_tool_data, input_df_filled_c
 #' @examples
 cts_update_sm_parent_cols <- function(input_df_cleaning_step_data,
                                       input_sm_seperator = "/",
+                                      input_uuid_col = "uuid",
+                                      input_enumerator_id_col = "enumerator_id",
+                                      input_point_id_col,
+                                      input_collected_date_col,
                                       input_location_col) {
 
   # check existance of sm columns

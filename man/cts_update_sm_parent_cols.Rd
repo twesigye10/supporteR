@@ -8,6 +8,10 @@ This function updates select multiple parent columns trying to keep the original
 cts_update_sm_parent_cols(
   input_df_cleaning_step_data,
   input_sm_seperator = "/",
+  input_uuid_col = "uuid",
+  input_enumerator_id_col = "enumerator_id",
+  input_point_id_col,
+  input_collected_date_col,
   input_location_col
 )
 }
@@ -15,6 +19,14 @@ cts_update_sm_parent_cols(
 \item{input_df_cleaning_step_data}{The output data frame from the cleaning step}
 
 \item{input_sm_seperator}{The seperator for select multiple}
+
+\item{input_uuid_col}{Specify the uuid column}
+
+\item{input_enumerator_id_col}{Specify the enumerator id column}
+
+\item{input_point_id_col}{Specify the point id column}
+
+\item{input_collected_date_col}{Specify the column for the date of data collection}
 
 \item{input_location_col}{Specify the location description column}
 }
