@@ -130,7 +130,11 @@ cleaning_support <- function(input_df_raw_data,
 #' @export
 #'
 #' @examples
-cts_add_new_sm_choices_to_data <- function(input_df_tool_data, input_df_filled_cl, input_df_survey, input_df_choices, input_sm_seperator = "/") {
+cts_add_new_sm_choices_to_data <- function(input_df_tool_data,
+                                           input_df_filled_cl,
+                                           input_df_survey,
+                                           input_df_choices,
+                                           input_sm_seperator = "/") {
   # gather choice options based on unique choices list
   df_grouped_choices<- input_df_choices %>%
     group_by(list_name) %>%
