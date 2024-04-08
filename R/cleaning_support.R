@@ -319,7 +319,7 @@ cts_update_sm_parent_cols <- function(input_df_cleaning_step_data,
                                                                       i.check.reviewed = "1",
                                                                       i.check.so_sm_choices = "",
                                                                       i.check.sheet = input_sheet_name,
-                                                                      i.check.index = input_index_col) %>%
+                                                                      i.check.index = !!sym(input_index_col)) %>%
                                                         dplyr::select(starts_with("i.check."))}) %>%
       supporteR::batch_select_rename()
   }
