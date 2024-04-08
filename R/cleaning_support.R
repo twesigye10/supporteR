@@ -220,9 +220,9 @@ cts_update_sm_parent_cols <- function(input_df_cleaning_step_data,
   if(!input_dataset_type %in% c("main", "loop")){
     stop("The dataset type should be either 'main' or 'loop'")
   }
-  if(input_dataset_type %in% c("loop") & (is.na(input_sheet_name)|is.na(input_index_col)|is.null(input_sheet_name)|is.null(input_index_col))){
-    stop("Missing sheet_name or index_col. Kindly specify then if you are working on loop dataset")
-  }
+  # if(input_dataset_type %in% c("loop") & (is.na(input_sheet_name)|is.na(input_index_col)|is.null(input_sheet_name)|is.null(input_index_col))){
+  #   stop("Missing sheet_name or index_col. Kindly specify then if you are working on loop dataset")
+  # }
   # parent column names
   sm_parent_cols <- input_df_cleaning_step_data %>%
     select(contains("/")) %>%
