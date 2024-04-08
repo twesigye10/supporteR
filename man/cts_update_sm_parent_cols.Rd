@@ -12,7 +12,10 @@ cts_update_sm_parent_cols(
   input_enumerator_id_col = "enumerator_id",
   input_point_id_col,
   input_collected_date_col,
-  input_location_col
+  input_location_col,
+  input_dataset_type = "main",
+  input_sheet_name,
+  input_index_col
 )
 }
 \arguments{
@@ -29,6 +32,12 @@ cts_update_sm_parent_cols(
 \item{input_collected_date_col}{Specify the column for the date of data collection}
 
 \item{input_location_col}{Specify the location description column}
+
+\item{input_dataset_type}{Specify the dataset type. Options are 'main' or 'loop'}
+
+\item{input_sheet_name}{Specify the sheet name as in the tool}
+
+\item{input_index_col}{Specify the index column in the repeat data}
 }
 \value{
 A list that contains an updated data and the extra log to add to the original log used for cleaning

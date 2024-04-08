@@ -194,6 +194,9 @@ cts_add_new_sm_choices_to_data <- function(input_df_tool_data,
 #' @param input_point_id_col Specify the point id column
 #' @param input_collected_date_col Specify the column for the date of data collection
 #' @param input_location_col Specify the location description column
+#' @param input_dataset_type Specify the dataset type. Options are 'main' or 'loop'
+#' @param input_sheet_name Specify the sheet name as in the tool
+#' @param input_index_col Specify the index column in the repeat data
 #'
 #' @return A list that contains an updated data and the extra log to add to the original log used for cleaning
 #' @export
@@ -205,13 +208,21 @@ cts_update_sm_parent_cols <- function(input_df_cleaning_step_data,
                                       input_enumerator_id_col = "enumerator_id",
                                       input_point_id_col,
                                       input_collected_date_col,
-                                      input_location_col) {
+                                      input_location_col,
+                                      input_dataset_type = "main",
+                                      input_sheet_name,
+                                      input_index_col) {
 
   # check existance of sm columns
   if(!str_detect(string = paste(colnames(input_df_cleaning_step_data), collapse = " "), pattern = paste0("\\",input_sm_seperator))){
     stop("check that there are select multiple columns and the sm seperator ")
   }
-
+  if(!input_dataset_type %in% c("main", "loop")){
+    stop("The dataset type should be either 'main' or 'loop'")
+  }
+  if(input_dataset_type %in% c("loop") & (is.na(input_sheet_name)|is.na(input_index_col))){
+    stop("Missing sheet_name or index_col. Kindly specify then if you are working on loop dataset")
+  }
   # parent column names
   sm_parent_cols <- input_df_cleaning_step_data %>%
     select(contains("/")) %>%
@@ -263,26 +274,56 @@ cts_update_sm_parent_cols <- function(input_df_cleaning_step_data,
 
   # generate extra log ------------------------------------------------------
 
-  df_log_parent_sm_cols_changes <- purrr::map_dfr(.x = sm_parent_cols,
-                                                  .f = ~ {df_updated_parent_cols %>%
-                                                      dplyr::filter(!!sym(paste0("check.old.",.x)) != !!sym(.x)) %>%
-                                                      dplyr::mutate(i.check.uuid := !!sym(input_uuid_col),
-                                                                    !!paste0("i.check.", input_enumerator_id_col) := !!sym(input_enumerator_id_col),
-                                                                    !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
-                                                                    !!paste0("i.check.", input_collected_date_col) = input_collected_date_col,
-                                                                    !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
-                                                                    i.check.change_type = "change_response",
-                                                                    i.check.question = .x,
-                                                                    i.check.old_value = as.character(!!sym(paste0("check.old.",.x))),
-                                                                    i.check.new_value = as.character(!!sym(.x)),
-                                                                    i.check.issue = "changed parent sm column",
-                                                                    i.check.description = "Parent column changed to match children columns",
-                                                                    i.check.other_text = "",
-                                                                    i.check.comment = "",
-                                                                    i.check.reviewed = "1",
-                                                                    i.check.so_sm_choices = "") %>%
-                                                      dplyr::select(starts_with("i.check."))}) %>%
-    supporteR::batch_select_rename()
+  # main dataset
+  if(input_dataset_type %in% c("main")){
+    df_log_parent_sm_cols_changes <- purrr::map_dfr(.x = sm_parent_cols,
+                                                    .f = ~ {df_updated_parent_cols %>%
+                                                        dplyr::filter(!!sym(paste0("check.old.",.x)) != !!sym(.x)) %>%
+                                                        dplyr::mutate(i.check.uuid := !!sym(input_uuid_col),
+                                                                      !!paste0("i.check.", input_enumerator_id_col) := !!sym(input_enumerator_id_col),
+                                                                      !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
+                                                                      !!paste0("i.check.", input_collected_date_col) := input_collected_date_col,
+                                                                      !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
+                                                                      i.check.change_type = "change_response",
+                                                                      i.check.question = .x,
+                                                                      i.check.old_value = as.character(!!sym(paste0("check.old.",.x))),
+                                                                      i.check.new_value = as.character(!!sym(.x)),
+                                                                      i.check.issue = "changed parent sm column",
+                                                                      i.check.description = "Parent column changed to match children columns",
+                                                                      i.check.other_text = "",
+                                                                      i.check.comment = "",
+                                                                      i.check.reviewed = "1",
+                                                                      i.check.so_sm_choices = "") %>%
+                                                        dplyr::select(starts_with("i.check."))}) %>%
+      supporteR::batch_select_rename()
+  }
+
+  # loop dataset
+  if(input_dataset_type %in% c("loop")){
+    df_log_parent_sm_cols_changes <- purrr::map_dfr(.x = sm_parent_cols,
+                                                    .f = ~ {df_updated_parent_cols %>%
+                                                        dplyr::filter(!!sym(paste0("check.old.",.x)) != !!sym(.x)) %>%
+                                                        dplyr::mutate(i.check.uuid := !!sym(input_uuid_col),
+                                                                      !!paste0("i.check.", input_enumerator_id_col) := !!sym(input_enumerator_id_col),
+                                                                      !!paste0("i.check.", input_point_id_col) := !!sym(input_point_id_col),
+                                                                      !!paste0("i.check.", input_collected_date_col) := input_collected_date_col,
+                                                                      !!paste0("i.check.", input_location_col) := !!sym(input_location_col),
+                                                                      i.check.change_type = "change_response",
+                                                                      i.check.question = .x,
+                                                                      i.check.old_value = as.character(!!sym(paste0("check.old.",.x))),
+                                                                      i.check.new_value = as.character(!!sym(.x)),
+                                                                      i.check.issue = "changed parent sm column",
+                                                                      i.check.description = "Parent column changed to match children columns",
+                                                                      i.check.other_text = "",
+                                                                      i.check.comment = "",
+                                                                      i.check.reviewed = "1",
+                                                                      i.check.so_sm_choices = "",
+                                                                      i.check.sheet = input_sheet_name,
+                                                                      i.check.index = input_index_col) %>%
+                                                        dplyr::select(starts_with("i.check."))}) %>%
+      supporteR::batch_select_rename()
+  }
+
 
   updated_sm_parent_data <- list("updated_sm_parents" = df_updated_parent_cols %>%
                                    select(-matches("^check.")),
