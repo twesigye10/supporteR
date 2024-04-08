@@ -210,8 +210,8 @@ cts_update_sm_parent_cols <- function(input_df_cleaning_step_data,
                                       input_collected_date_col,
                                       input_location_col,
                                       input_dataset_type = "main",
-                                      input_sheet_name = NULL,
-                                      input_index_col = NULL) {
+                                      input_sheet_name = NA_character_,
+                                      input_index_col = NA_character_) {
 
   # check existance of sm columns
   if(!str_detect(string = paste(colnames(input_df_cleaning_step_data), collapse = " "), pattern = paste0("\\",input_sm_seperator))){
@@ -220,9 +220,9 @@ cts_update_sm_parent_cols <- function(input_df_cleaning_step_data,
   if(!input_dataset_type %in% c("main", "loop")){
     stop("The dataset type should be either 'main' or 'loop'")
   }
-  # if(input_dataset_type %in% c("loop") & (is.na(input_sheet_name)|is.na(input_index_col)|is.null(input_sheet_name)|is.null(input_index_col))){
-  #   stop("Missing sheet_name or index_col. Kindly specify then if you are working on loop dataset")
-  # }
+  if(input_dataset_type %in% c("loop") & (is.na(input_sheet_name)|is.na(input_index_col))){
+    stop("Missing sheet_name or index_col. Kindly specify then if you are working on loop dataset")
+  }
   # parent column names
   sm_parent_cols <- input_df_cleaning_step_data %>%
     select(contains("/")) %>%
