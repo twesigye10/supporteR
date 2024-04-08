@@ -14,8 +14,8 @@ cts_update_sm_parent_cols(
   input_collected_date_col,
   input_location_col,
   input_dataset_type = "main",
-  input_sheet_name,
-  input_index_col
+  input_sheet_name = NULL,
+  input_index_col = NULL
 )
 }
 \arguments{
