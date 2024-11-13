@@ -154,7 +154,7 @@ cts_add_new_sm_choices_to_data <- function(input_df_tool_data,
     filter(str_detect(string = type, pattern = "select_one|select one|select_multiple|select multiple")) %>%
     separate(col = type, into = c("select_type", "list_name"), sep =" ", remove = TRUE, extra = "drop") %>%
     left_join(df_grouped_choices, by = "list_name") %>%
-    filter(!str_detect(string = choice_options, pattern = int.new_value)) %>%
+    filter(!str_detect(string = choice_options, pattern = paste0("\\b",int.new_value, "\\b"))) %>%
     select(question) %>%
     group_by(question) %>%
     summarise(n = n())
